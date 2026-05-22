@@ -15,3 +15,8 @@ export interface BaseState {
   pendingSession: any;
   pendingToken: string | null;
 }
+
+export interface ReduxState {
+  // base: BaseState;
+  user: LoggedUserInterface | null;
+}

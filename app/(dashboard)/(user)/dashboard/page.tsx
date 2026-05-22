@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import { postsApi, integrationsApi } from "../../../lib/api";
+// import { postsApi, integrationsApi } from "../../../lib/api";
 import { useRouter } from "next/navigation";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import { integrationsApi, postsApi } from "@/lib/api";
 
 const createPostSchema = Yup.object().shape({
   content: Yup.string().required("Content is required"),
@@ -106,8 +107,8 @@ export default function CreatePostPage() {
                         type="button"
                         onClick={() => setFieldValue("integrationId", int.id)}
                         className={`flex items-center gap-3 p-3 rounded-xl border text-left transition ${values.integrationId === int.id
-                            ? "border-violet-500 bg-violet-600/10"
-                            : "border-gray-700 bg-gray-800 hover:border-gray-600"
+                          ? "border-violet-500 bg-violet-600/10"
+                          : "border-gray-700 bg-gray-800 hover:border-gray-600"
                           }`}
                       >
                         <div

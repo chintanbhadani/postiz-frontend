@@ -11,8 +11,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme, useMediaQuery } from "@mui/material";
-import { useAuth } from "../../context/auth.context";
-import Menu from "../Components/SideNavigationMenu/Menu";
+import { useAuth } from "@/context/auth.context";
+// import { useAuth } from "../../context/auth.context";
+import Menu from "../../Components/SideNavigationMenu/Menu";
 
 const drawerWidth = 240;
 
