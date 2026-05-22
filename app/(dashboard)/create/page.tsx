@@ -42,7 +42,7 @@ export default function CreatePostPage() {
         publishTime: timeStr,
         state: "QUEUE"
       });
-    }).catch(() => { });
+    }).catch(() => {});
   }, []);
 
   const handleSubmit = async (values: any, { setSubmitting }: any) => {
@@ -56,7 +56,7 @@ export default function CreatePostPage() {
         publishDate,
         state: values.state,
       });
-      setSuccess(values.state === "DRAFT" ? "Saved as draft!" : "Post scheduled successfully! ✅");
+      setSuccess(values.state === "DRAFT" ? "Saved as draft!" : "Post scheduled successfully!");
       setTimeout(() => router.push("/"), 1200);
     } catch (err: any) {
       setError(err?.response?.data?.message || "Failed to schedule post");
@@ -74,16 +74,16 @@ export default function CreatePostPage() {
     <div className="p-8 max-w-3xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">Create Post</h1>
-        <p className="text-gray-400 mt-1">Compose and schedule your social media post</p>
+        <p className="text-gray-500 mt-1">Compose and schedule your social media post</p>
       </div>
 
       {integrations.length === 0 ? (
-        <div className="bg-amber-950/30 border border-amber-800/50 rounded-2xl p-8 text-center">
-          <div className="text-4xl mb-4">🔗</div>
+        <div className="bg-[rgba(245,158,11,0.05)] border border-[rgba(245,158,11,0.15)] rounded-2xl p-8 text-center backdrop-blur-[12px]">
+          <div className="text-4xl mb-4 opacity-60">🔗</div>
           <p className="text-amber-300 font-medium mb-2">No channels connected</p>
-          <p className="text-amber-400/70 text-sm mb-4">Connect at least one social media account first.</p>
-          <a href="/channels" className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-sm transition">
-            Go to Channels →
+          <p className="text-amber-400/50 text-sm mb-4">Connect at least one social media account first.</p>
+          <a href="/channels" className="px-4 py-2 bg-[#6366f1] hover:bg-[#5558e6] text-white rounded-xl text-sm transition shadow-[0_0_15px_rgba(99,102,241,0.35)]">
+            Go to Channels
           </a>
         </div>
       ) : (
@@ -97,6 +97,7 @@ export default function CreatePostPage() {
             const selectedIntegration = integrations.find((i) => i.id === values.integrationId);
             return (
               <Form className="space-y-6">
+                {/* Channel Selector */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-3">Post to</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -105,10 +106,11 @@ export default function CreatePostPage() {
                         key={int.id}
                         type="button"
                         onClick={() => setFieldValue("integrationId", int.id)}
-                        className={`flex items-center gap-3 p-3 rounded-xl border text-left transition ${values.integrationId === int.id
-                            ? "border-violet-500 bg-violet-600/10"
-                            : "border-gray-700 bg-gray-800 hover:border-gray-600"
-                          }`}
+                        className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
+                          values.integrationId === int.id
+                            ? "border-[#6366f1] bg-[rgba(99,102,241,0.1)] shadow-[0_0_15px_rgba(99,102,241,0.15)]"
+                            : "border-white/[0.05] bg-[rgba(15,23,42,0.35)] backdrop-blur-[12px] hover:border-white/[0.1]"
+                        }`}
                       >
                         <div
                           className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
@@ -124,14 +126,15 @@ export default function CreatePostPage() {
                     ))}
                   </div>
                   {touched.integrationId && errors.integrationId && (
-                    <span className="text-red-400 text-xs mt-1 block">{errors.integrationId}</span>
+                    <span className="text-[#f87171] text-xs mt-1 block">{errors.integrationId}</span>
                   )}
                 </div>
 
+                {/* Content Textarea */}
                 <div>
                   <div className="flex justify-between mb-2">
                     <label className="text-sm font-medium text-gray-300">Content</label>
-                    <span className={`text-xs ${charCount > 280 ? "text-red-400" : "text-gray-500"}`}>
+                    <span className={`text-xs ${charCount > 280 ? "text-[#f87171]" : "text-gray-500"}`}>
                       {charCount} chars
                     </span>
                   </div>
@@ -146,17 +149,19 @@ export default function CreatePostPage() {
                     rows={6}
                     required
                     placeholder="What do you want to share?"
-                    className={`w-full bg-gray-800 border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 transition resize-none ${touched.content && errors.content ? "border-red-500" : "border-gray-700"
-                      }`}
+                    className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition resize-none backdrop-blur-[12px] ${
+                      touched.content && errors.content ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                    }`}
                   />
                   {touched.content && errors.content && (
-                    <span className="text-red-400 text-xs mt-1 block">{errors.content}</span>
+                    <span className="text-[#f87171] text-xs mt-1 block">{errors.content}</span>
                   )}
                 </div>
 
+                {/* Date/Time Pickers */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">📅 Date</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Date</label>
                     <input
                       type="date"
                       name="publishDate"
@@ -165,15 +170,16 @@ export default function CreatePostPage() {
                       onBlur={handleBlur}
                       min={new Date().toISOString().split("T")[0]}
                       required
-                      className={`w-full bg-gray-800 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition ${touched.publishDate && errors.publishDate ? "border-red-500" : "border-gray-700"
-                        }`}
+                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] [color-scheme:dark] ${
+                        touched.publishDate && errors.publishDate ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                      }`}
                     />
                     {touched.publishDate && errors.publishDate && (
-                      <span className="text-red-400 text-xs mt-1 block">{errors.publishDate}</span>
+                      <span className="text-[#f87171] text-xs mt-1 block">{errors.publishDate}</span>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">⏰ Time</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Time</label>
                     <input
                       type="time"
                       name="publishTime"
@@ -181,31 +187,34 @@ export default function CreatePostPage() {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       required
-                      className={`w-full bg-gray-800 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition ${touched.publishTime && errors.publishTime ? "border-red-500" : "border-gray-700"
-                        }`}
+                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] [color-scheme:dark] ${
+                        touched.publishTime && errors.publishTime ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                      }`}
                     />
                     {touched.publishTime && errors.publishTime && (
-                      <span className="text-red-400 text-xs mt-1 block">{errors.publishTime}</span>
+                      <span className="text-[#f87171] text-xs mt-1 block">{errors.publishTime}</span>
                     )}
                   </div>
                 </div>
 
+                {/* Publish Preview */}
                 {values.publishDate && values.publishTime && (
-                  <div className="bg-violet-950/30 border border-violet-800/40 rounded-xl px-4 py-3 text-sm text-violet-300">
-                    📆 Will publish: {new Date(`${values.publishDate}T${values.publishTime}`).toLocaleString()}
-                    {selectedIntegration && ` → ${selectedIntegration.name} (${selectedIntegration.platform})`}
+                  <div className="bg-[rgba(99,102,241,0.05)] border border-[rgba(99,102,241,0.15)] rounded-xl px-4 py-3 text-sm text-[#818cf8] backdrop-blur-[12px]">
+                    Will publish: {new Date(`${values.publishDate}T${values.publishTime}`).toLocaleString()}
+                    {selectedIntegration && ` on ${selectedIntegration.name} (${selectedIntegration.platform})`}
                   </div>
                 )}
 
-                {error && <div className="bg-red-950 border border-red-800 rounded-xl px-4 py-3 text-red-400 text-sm">{error}</div>}
-                {success && <div className="bg-green-950 border border-green-800 rounded-xl px-4 py-3 text-green-400 text-sm">{success}</div>}
+                {error && <div className="bg-[rgba(248,113,113,0.05)] border border-[rgba(248,113,113,0.15)] rounded-xl px-4 py-3 text-[#f87171] text-sm">{error}</div>}
+                {success && <div className="bg-[rgba(52,211,153,0.05)] border border-[rgba(52,211,153,0.15)] rounded-xl px-4 py-3 text-[#34d399] text-sm">{success}</div>}
 
+                {/* Submit Buttons */}
                 <div className="flex gap-3">
                   <button
                     type="submit"
                     onClick={() => setFieldValue("state", "DRAFT")}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-xl border border-gray-700 transition disabled:opacity-50 cursor-pointer"
+                    className="flex-1 px-4 py-3 bg-[rgba(15,23,42,0.35)] hover:bg-[rgba(15,23,42,0.55)] text-gray-300 font-medium rounded-xl border border-white/[0.05] transition disabled:opacity-50 cursor-pointer backdrop-blur-[12px]"
                   >
                     {isSubmitting && values.state === "DRAFT" ? "Saving..." : "Save as Draft"}
                   </button>
@@ -213,9 +222,9 @@ export default function CreatePostPage() {
                     type="submit"
                     onClick={() => setFieldValue("state", "QUEUE")}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-violet-600 to-purple-700 hover:from-violet-500 hover:to-purple-600 text-white font-semibold rounded-xl transition shadow-lg shadow-violet-500/20 disabled:opacity-50 cursor-pointer"
+                    className="flex-1 px-4 py-3 bg-[#6366f1] hover:bg-[#5558e6] text-white font-semibold rounded-xl transition shadow-[0_0_15px_rgba(99,102,241,0.35)] hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] disabled:opacity-50 cursor-pointer"
                   >
-                    {isSubmitting && values.state === "QUEUE" ? "Scheduling..." : "🚀 Schedule Post"}
+                    {isSubmitting && values.state === "QUEUE" ? "Scheduling..." : "Schedule Post"}
                   </button>
                 </div>
               </Form>

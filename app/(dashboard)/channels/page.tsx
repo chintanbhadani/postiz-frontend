@@ -112,26 +112,26 @@ export default function ChannelsPage() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">Social Channels</h1>
-        <p className="text-gray-400 mt-1">Connect your social media accounts to start scheduling</p>
+        <p className="text-gray-500 mt-1">Connect your social media accounts to start scheduling</p>
       </div>
 
       {integrations.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Connected ({integrations.length})</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Connected ({integrations.length})</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {integrations.map((int) => {
               const p = PLATFORMS.find((pl) => pl.id === int.platform);
               return (
-                <div key={int.id} className="bg-gray-900 border border-green-800/40 rounded-2xl p-4 flex items-center gap-3">
+                <div key={int.id} className="bg-[rgba(15,23,42,0.35)] border border-[rgba(52,211,153,0.15)] rounded-2xl p-4 flex items-center gap-3 backdrop-blur-[12px]">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold"
                     style={{ backgroundColor: p?.color || "#6b7280" }}>
                     {int.platform?.[0]?.toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium truncate">{int.name}</p>
-                    <p className="text-green-400 text-xs">✓ Connected · {int.platform}</p>
+                    <p className="text-[#34d399] text-xs">Connected &middot; {int.platform}</p>
                   </div>
-                  <button onClick={() => disconnect(int.id)} className="text-gray-600 hover:text-red-400 transition text-sm p-1 cursor-pointer">✕</button>
+                  <button onClick={() => disconnect(int.id)} className="text-gray-600 hover:text-[#f87171] transition text-sm p-1 cursor-pointer">✕</button>
                 </div>
               );
             })}
@@ -139,7 +139,7 @@ export default function ChannelsPage() {
         </div>
       )}
 
-      <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">All Platforms</h2>
+      <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">All Platforms</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {PLATFORMS.map((platform) => {
           const connected = isConnected(platform.id);
@@ -147,10 +147,10 @@ export default function ChannelsPage() {
             <button
               key={platform.id}
               onClick={() => { if (!connected) { setSelected(platform); setError(""); } }}
-              className={`p-4 rounded-2xl border text-left transition group relative ${
+              className={`p-4 rounded-2xl border text-left transition-all group relative ${
                 connected
-                  ? "border-green-800/40 bg-green-950/10 cursor-default"
-                  : "border-gray-700 bg-gray-900 hover:border-violet-500/50 hover:bg-gray-800 cursor-pointer"
+                  ? "border-[rgba(52,211,153,0.15)] bg-[rgba(52,211,153,0.03)] cursor-default"
+                  : "border-white/[0.05] bg-[rgba(15,23,42,0.35)] backdrop-blur-[12px] hover:border-[rgba(99,102,241,0.2)] hover:bg-[rgba(99,102,241,0.03)] cursor-pointer"
               }`}
             >
               <div className="w-10 h-10 rounded-xl mb-3 flex items-center justify-center text-white font-bold text-sm"
@@ -160,7 +160,7 @@ export default function ChannelsPage() {
               <p className="text-white text-sm font-medium">{platform.name}</p>
               <p className="text-xs mt-0.5">
                 {connected
-                  ? <span className="text-green-400">✓ Connected</span>
+                  ? <span className="text-[#34d399]">Connected</span>
                   : <span className="text-gray-500">{platform.authType === "oauth" ? "OAuth" : "API Key"}</span>}
               </p>
             </button>
@@ -168,9 +168,10 @@ export default function ChannelsPage() {
         })}
       </div>
 
+      {/* Connect Modal - Glass */}
       {selected && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[rgba(15,23,42,0.85)] border border-white/[0.05] rounded-2xl p-6 w-full max-w-md shadow-2xl backdrop-blur-[16px]">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold"
                 style={{ backgroundColor: selected.color }}>
@@ -178,7 +179,7 @@ export default function ChannelsPage() {
               </div>
               <div>
                 <h3 className="text-white font-semibold">Connect {selected.name}</h3>
-                <p className="text-gray-400 text-sm">{selected.authType === "oauth" ? "Redirects to " + selected.name : "Enter your credentials"}</p>
+                <p className="text-gray-500 text-sm">{selected.authType === "oauth" ? "Redirects to " + selected.name : "Enter your credentials"}</p>
               </div>
             </div>
 
@@ -201,35 +202,35 @@ export default function ChannelsPage() {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         required
-                        className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                        className="w-full bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px]"
                       />
                     </div>
                   ))}
 
                   {selected.authType === "oauth" && (
-                    <div className="bg-violet-950/30 border border-violet-800/40 rounded-xl px-4 py-3 text-sm text-violet-300">
-                      You'll be redirected to {selected.name} to authorize access.
+                    <div className="bg-[rgba(99,102,241,0.05)] border border-[rgba(99,102,241,0.15)] rounded-xl px-4 py-3 text-sm text-[#818cf8]">
+                      You&apos;ll be redirected to {selected.name} to authorize access.
                     </div>
                   )}
 
-                  {error && <div className="bg-red-950 border border-red-800 rounded-xl px-4 py-3 text-red-400 text-sm">{error}</div>}
-                  {success && <div className="bg-green-950 border border-green-800 rounded-xl px-4 py-3 text-green-400 text-sm">{success}</div>}
+                  {error && <div className="bg-[rgba(248,113,113,0.05)] border border-[rgba(248,113,113,0.15)] rounded-xl px-4 py-3 text-[#f87171] text-sm">{error}</div>}
+                  {success && <div className="bg-[rgba(52,211,153,0.05)] border border-[rgba(52,211,153,0.15)] rounded-xl px-4 py-3 text-[#34d399] text-sm">{success}</div>}
 
                   <div className="flex gap-3 mt-2">
                     <button
                       type="button"
                       onClick={() => setSelected(null)}
-                      className="flex-1 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl border border-gray-700 transition text-sm cursor-pointer"
+                      className="flex-1 px-4 py-3 bg-[rgba(15,23,42,0.35)] hover:bg-[rgba(15,23,42,0.55)] text-gray-300 rounded-xl border border-white/[0.05] transition text-sm cursor-pointer backdrop-blur-[12px]"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 px-4 py-3 text-white font-medium rounded-xl transition text-sm disabled:opacity-50 cursor-pointer"
+                      className="flex-1 px-4 py-3 text-white font-medium rounded-xl transition text-sm disabled:opacity-50 cursor-pointer shadow-[0_0_15px_rgba(99,102,241,0.25)]"
                       style={{ backgroundColor: selected.color }}
                     >
-                      {isSubmitting ? "Connecting..." : selected.authType === "oauth" ? "Authorize →" : "Connect"}
+                      {isSubmitting ? "Connecting..." : selected.authType === "oauth" ? "Authorize" : "Connect"}
                     </button>
                   </div>
                 </Form>

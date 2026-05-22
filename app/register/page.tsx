@@ -2,22 +2,9 @@
 import { useState } from "react";
 import { useAuth } from "../../context/auth.context";
 import Link from "next/link";
-import { 
-  Box, 
-  Button, 
-  TextField, 
-  Typography, 
-  Container, 
-  Stack,
-  Alert,
-  CircularProgress,
-  IconButton,
-  InputAdornment
-} from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 const registerSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -30,11 +17,6 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
 
   const handleSubmit = async (values: any, { setSubmitting }: any) => {
     setError("");
@@ -52,53 +34,35 @@ export default function RegisterPage() {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%', bgcolor: 'background.paper' }}>
-      
-      {/* Left side: Form */}
-      <Box 
-        sx={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column', 
-          justifyContent: 'center', 
-          px: { xs: 4, sm: 8, md: 12, lg: 16 },
-          py: { xs: 6, md: 0 },
-          position: 'relative'
-        }}
-      >
-        <Container maxWidth="xs" sx={{ mx: 'auto', p: 0 }}>
-          
-          {/* Logo / Brand Name */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 6 }}>
-            <Box 
-              sx={{ 
-                width: 32, 
-                height: 32, 
-                bgcolor: 'text.primary', 
-                borderRadius: 1, 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center' 
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'background.paper' }}>P</Typography>
-            </Box>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary', letterSpacing: '-0.5px' }}>
-              Postiz
-            </Typography>
-          </Box>
+    <div className="flex min-h-screen w-full bg-[#030712] relative">
 
-          <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: 'text.primary' }}>
-            Create an account
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+      {/* Background grid + glow */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
+      <div className="fixed top-[-200px] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)] pointer-events-none" />
+
+      {/* Left side: Form */}
+      <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-20 py-12 md:py-0 relative z-10">
+        <div className="mx-auto w-full max-w-xs">
+
+          {/* Logo */}
+          <div className="flex items-center gap-2.5 mb-8">
+            <div className="relative w-8 h-8 flex-shrink-0">
+              <div className="absolute inset-0 bg-[#6366f1] rounded-lg transform -rotate-6 opacity-60 blur-[2px]"></div>
+              <div className="absolute inset-0 bg-[#6366f1] rounded-lg transform rotate-2 opacity-80"></div>
+              <div className="absolute inset-0 bg-[#6366f1] rounded-lg flex items-center justify-center shadow-[0_0_12px_rgba(99,102,241,0.4)]">
+                <span className="text-white text-sm font-black">P</span>
+              </div>
+            </div>
+            <span className="text-white font-black text-xl tracking-tight">Postiz</span>
+          </div>
+
+          <h1 className="text-3xl font-bold text-white mb-2">Create an account</h1>
+          <p className="text-gray-500 mb-8">
             Already have an account?{" "}
-            <Link href="/login" passHref style={{ textDecoration: 'none' }}>
-              <Typography component="span" sx={{ fontWeight: 500, color: '#2e7d32', '&:hover': { textDecoration: 'underline' } }}>
-                Log in
-              </Typography>
+            <Link href="/login" className="text-[#818cf8] hover:text-[#6366f1] font-medium hover:underline">
+              Log in
             </Link>
-          </Typography>
+          </p>
 
           <Formik
             initialValues={{ name: "", organizationName: "", email: "", password: "" }}
@@ -106,185 +70,141 @@ export default function RegisterPage() {
             onSubmit={handleSubmit}
           >
             {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
-              <Form noValidate autoComplete="off">
-                <Stack spacing={3}>
-                  <Box sx={{ display: 'flex', gap: 2 }}>
-                    <TextField
-                      label="Your Name"
+              <Form noValidate autoComplete="off" className="space-y-5">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Your Name</label>
+                    <input
                       name="name"
-                      variant="outlined"
-                      fullWidth
-                      required
+                      type="text"
                       value={values.name}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      error={touched.name && Boolean(errors.name)}
-                      helperText={touched.name && errors.name}
-                    />
-                    <TextField
-                      label="Organization"
-                      name="organizationName"
-                      variant="outlined"
-                      fullWidth
                       required
+                      placeholder="John"
+                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] ${
+                        touched.name && errors.name ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                      }`}
+                    />
+                    {touched.name && errors.name && (
+                      <span className="text-[#f87171] text-xs mt-1 block">{errors.name}</span>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Organization</label>
+                    <input
+                      name="organizationName"
+                      type="text"
                       value={values.organizationName}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      error={touched.organizationName && Boolean(errors.organizationName)}
-                      helperText={touched.organizationName && errors.organizationName}
+                      required
+                      placeholder="Acme Inc"
+                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] ${
+                        touched.organizationName && errors.organizationName ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                      }`}
                     />
-                  </Box>
+                    {touched.organizationName && errors.organizationName && (
+                      <span className="text-[#f87171] text-xs mt-1 block">{errors.organizationName}</span>
+                    )}
+                  </div>
+                </div>
 
-                  <TextField
-                    label="Email"
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                  <input
                     name="email"
                     type="email"
-                    variant="outlined"
-                    fullWidth
-                    required
                     value={values.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.email && Boolean(errors.email)}
-                    helperText={touched.email && errors.email}
-                  />
-                  
-                  <TextField
-                    label="Password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    variant="outlined"
-                    fullWidth
                     required
-                    value={values.password}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.password && Boolean(errors.password)}
-                    helperText={touched.password && errors.password}
-                    slotProps={{
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={handleClickShowPassword}
-                              onMouseDown={handleMouseDownPassword}
-                              edge="end"
-                            >
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        )
-                      }
-                    }}
+                    placeholder="you@example.com"
+                    className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] ${
+                      touched.email && errors.email ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                    }`}
                   />
-
-                  {error && (
-                    <Alert severity="error">{error}</Alert>
+                  {touched.email && errors.email && (
+                    <span className="text-[#f87171] text-xs mt-1 block">{errors.email}</span>
                   )}
+                </div>
 
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    disabled={isSubmitting}
-                    disableElevation
-                    sx={{ 
-                      mt: 1, 
-                      bgcolor: '#A3E695', 
-                      color: 'black', 
-                      fontWeight: 'bold',
-                      py: 1.5,
-                      '&:hover': { bgcolor: '#8CD57E' },
-                      '&.Mui-disabled': { bgcolor: '#e0e0e0', color: '#9e9e9e' }
-                    }}
-                  >
-                    {isSubmitting ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
-                  </Button>
-                </Stack>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                  <div className="relative">
+                    <input
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={values.password}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      required
+                      placeholder="Min. 6 characters"
+                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] ${
+                        touched.password && errors.password ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {touched.password && errors.password && (
+                    <span className="text-[#f87171] text-xs mt-1 block">{errors.password}</span>
+                  )}
+                </div>
+
+                {error && (
+                  <div className="bg-[rgba(248,113,113,0.05)] border border-[rgba(248,113,113,0.15)] rounded-xl px-4 py-3 text-[#f87171] text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-[#6366f1] hover:bg-[#5558e6] text-white font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(99,102,241,0.35)] hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : "Sign Up"}
+                </button>
               </Form>
             )}
           </Formik>
-        </Container>
-      </Box>
+        </div>
+      </div>
 
-      {/* Right side: Graphic/Image (Hidden on mobile) */}
-      <Box 
-        sx={{ 
-          flex: 1, 
-          bgcolor: '#FFD570', 
-          p: { md: 6, lg: 12 }, 
-          display: { xs: 'none', md: 'flex' },
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        {/* Decorative background pattern overlay */}
-        <Box 
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            opacity: 0.2,
-            backgroundImage: 'radial-gradient(circle at center, #000 1px, transparent 1px)',
-            backgroundSize: '20px 20px'
-          }} 
-        />
-        
-        <Box sx={{ position: 'relative', zIndex: 10, maxWidth: 500 }}>
-          <Box 
-            sx={{ 
-              display: 'inline-block', 
-              px: 2, 
-              py: 0.5, 
-              border: '1px solid black', 
-              borderRadius: '20px', 
-              bgcolor: 'white', 
-              mb: 3 
-            }}
-          >
-            <Typography variant="caption" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
-              WELCOME
-            </Typography>
-          </Box>
-          <Typography 
-            variant="h3" 
-            sx={{ fontWeight: '900', color: 'text.primary', mb: 5, lineHeight: 1.1, letterSpacing: '-1px' }}
-          >
+      {/* Right side: Graphic (Hidden on mobile) */}
+      <div className="hidden md:flex flex-1 items-center justify-center relative overflow-hidden bg-[rgba(99,102,241,0.03)] border-l border-white/[0.03]">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
+
+        <div className="relative z-10 max-w-md px-8">
+          <div className="inline-block px-3 py-1 border border-[rgba(99,102,241,0.2)] rounded-full bg-[rgba(99,102,241,0.08)] mb-6">
+            <span className="text-[10px] font-bold text-[#818cf8] uppercase tracking-wider">Welcome</span>
+          </div>
+          <h2 className="text-4xl font-black text-white mb-6 leading-[1.1] tracking-tight">
             Join thousands of creators scheduling their posts
-          </Typography>
-          
-          {/* Abstract representation of the UI graphic from the reference image */}
-          <Box 
-            sx={{ 
-              bgcolor: 'background.paper', 
-              borderRadius: 3, 
-              boxShadow: 24, 
-              p: 3,
-              border: '1px solid',
-              borderColor: 'divider',
-              transform: 'rotate(-2deg)',
-              transition: 'transform 0.5s',
-              '&:hover': { transform: 'rotate(0deg)' }
-            }}
-          >
-            <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-              <Box sx={{ width: 48, height: 48, borderRadius: '50%', bgcolor: '#dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography sx={{ color: '#2563eb', fontWeight: 'bold' }}>✓</Typography>
-              </Box>
-              <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 1 }}>
-                <Box sx={{ height: 16, bgcolor: 'grey.200', borderRadius: 1, width: '50%' }} />
-                <Box sx={{ height: 12, bgcolor: 'grey.100', borderRadius: 1, width: '75%' }} />
-              </Box>
-            </Box>
-            <Stack spacing={2}>
-              <Box sx={{ height: 60, bgcolor: 'grey.50', borderRadius: 2, border: '1px solid', borderColor: 'grey.100' }} />
-              <Box sx={{ height: 60, bgcolor: 'grey.50', borderRadius: 2, border: '1px solid', borderColor: 'grey.100' }} />
-            </Stack>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+          </h2>
+
+          <div className="bg-[rgba(15,23,42,0.55)] backdrop-blur-[16px] border border-white/[0.08] rounded-2xl p-5 transform -rotate-1 hover:rotate-0 transition-transform duration-500 shadow-xl">
+            <div className="flex gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-[rgba(52,211,153,0.1)] border border-[rgba(52,211,153,0.15)] flex items-center justify-center">
+                <span className="text-[#34d399] font-bold text-lg">+</span>
+              </div>
+              <div className="flex-1 flex flex-col justify-center gap-2">
+                <div className="h-3 bg-white/[0.06] rounded w-1/2" />
+                <div className="h-2 bg-white/[0.03] rounded w-3/4" />
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="h-16 bg-white/[0.03] rounded-xl border border-white/[0.04]" />
+              <div className="h-16 bg-white/[0.03] rounded-xl border border-white/[0.04]" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
