@@ -54,7 +54,7 @@ export default function Menu() {
   }, [user]);
 
   const getPlatformIcon = (platform: string) => {
-    const color = PLATFORM_COLORS[platform.toLowerCase()] || "#982E52";
+    const color = PLATFORM_COLORS[platform.toLowerCase()] || "var(--secondary)";
     const icons: Record<string, React.ReactElement> = {
       facebook: <FacebookIcon />,
       twitter: <TwitterIcon />,
@@ -81,23 +81,23 @@ export default function Menu() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "#fff" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--natural)" }}>
 
       {/* ── Brand ── */}
       <div style={{ padding: "20px 20px 16px" }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <div style={{
-            width: 34, height: 34, borderRadius: 9, background: "#982E52",
+            width: 34, height: 34, borderRadius: 9, background: "var(--secondary)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 2px 8px rgba(152,46,82,0.25)", flexShrink: 0,
+            boxShadow: "0 2px 8px var(--shadow-rose)", flexShrink: 0,
           }}>
-            <span style={{ color: "#fff", fontSize: 16, fontWeight: 900, fontFamily: "var(--font-syne)" }}>P</span>
+            <span style={{ color: "var(--btn-primary-text)", fontSize: 16, fontWeight: 900, fontFamily: "var(--font-syne)" }}>P</span>
           </div>
           <div>
-            <span style={{ fontFamily: "var(--font-syne)", fontWeight: 400, fontSize: 17, color: "#0D090B", display: "block", lineHeight: 1.2 }}>
+            <span style={{ fontFamily: "var(--font-syne)", fontWeight: 400, fontSize: 17, color: "var(--primary)", display: "block", lineHeight: 1.2 }}>
               Postiz
             </span>
-            <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(13,9,11,0.35)", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "var(--font-inter)" }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "var(--font-inter)" }}>
               Social Suite
             </span>
           </div>
@@ -111,19 +111,19 @@ export default function Menu() {
           style={{
             display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
             padding: "9px 16px", borderRadius: 10,
-            background: "#982E52", color: "#fff",
+            background: "var(--secondary)", color: "var(--btn-primary-text)",
             fontFamily: "var(--font-inter)", fontSize: 13, fontWeight: 700,
             textDecoration: "none",
-            boxShadow: "0 2px 10px rgba(152,46,82,0.25)",
+            boxShadow: "0 2px 10px var(--shadow-rose)",
             transition: "all 0.15s ease",
           }}
           onMouseEnter={e => {
-            (e.currentTarget as HTMLElement).style.background = "#B8435F";
-            (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(152,46,82,0.35)";
+            (e.currentTarget as HTMLElement).style.background = "var(--secondary-light)";
+            (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px var(--shadow-md)";
           }}
           onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.background = "#982E52";
-            (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 10px rgba(152,46,82,0.25)";
+            (e.currentTarget as HTMLElement).style.background = "var(--secondary)";
+            (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 10px var(--shadow-rose)";
           }}
         >
           <Plus size={15} strokeWidth={2.5} />
@@ -144,20 +144,20 @@ export default function Menu() {
                 padding: "8px 12px", borderRadius: 10,
                 fontFamily: "var(--font-inter)", fontSize: 13, fontWeight: 600,
                 textDecoration: "none", position: "relative",
-                background: isActive ? "rgba(152,46,82,0.07)" : "transparent",
-                color: isActive ? "#982E52" : "rgba(13,9,11,0.55)",
+                background: isActive ? "var(--secondary-dim)" : "transparent",
+                color: isActive ? "var(--secondary)" : "rgba(13,9,11,0.55)",
                 transition: "all 0.15s ease",
               }}
               onMouseEnter={e => {
                 if (!isActive) {
-                  (e.currentTarget as HTMLElement).style.background = "#F6F3F2";
-                  (e.currentTarget as HTMLElement).style.color = "#0D090B";
+                  (e.currentTarget as HTMLElement).style.background = "var(--tertiary)";
+                  (e.currentTarget as HTMLElement).style.color = "var(--primary)";
                 }
               }}
               onMouseLeave={e => {
                 if (!isActive) {
                   (e.currentTarget as HTMLElement).style.background = "transparent";
-                  (e.currentTarget as HTMLElement).style.color = "rgba(13,9,11,0.55)";
+                  (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
                 }
               }}
             >
@@ -165,11 +165,11 @@ export default function Menu() {
               {isActive && (
                 <span style={{
                   position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
-                  width: 3, height: "55%", background: "#982E52",
+                  width: 3, height: "55%", background: "var(--secondary)",
                   borderRadius: "0 3px 3px 0",
                 }} />
               )}
-              <Icon size={16} style={{ color: isActive ? "#982E52" : "rgba(13,9,11,0.35)", flexShrink: 0 }} />
+              <Icon size={16} style={{ color: isActive ? "var(--secondary)" : "rgba(13,9,11,0.35)", flexShrink: 0 }} />
               <span>{label}</span>
             </Link>
           );
@@ -177,7 +177,7 @@ export default function Menu() {
       </nav>
 
       {/* ── Divider ── */}
-      <div style={{ margin: "12px 16px", height: 1, background: "rgba(13,9,11,0.06)" }} />
+      <div style={{ margin: "12px 16px", height: 1, background: "var(--border)" }} />
 
       {/* ── Connected Channels ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, overflowY: "auto", padding: "0 8px" }}>
@@ -185,7 +185,7 @@ export default function Menu() {
           padding: "0 12px 8px",
           fontSize: 10, fontWeight: 800,
           fontFamily: "var(--font-inter)",
-          color: "rgba(13,9,11,0.3)",
+          color: "var(--text-muted)",
           textTransform: "uppercase",
           letterSpacing: "0.12em",
         }}>
@@ -202,12 +202,12 @@ export default function Menu() {
                   padding: "7px 12px", borderRadius: 8,
                   cursor: "default", transition: "background 0.12s",
                 }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#F6F3F2"}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--tertiary)"}
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
                   {getPlatformIcon(int.platform)}
-                  <span style={{ fontSize: 12, fontWeight: 600, color: "#0D090B", fontFamily: "var(--font-inter)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "var(--primary)", fontFamily: "var(--font-inter)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {int.name}
                   </span>
                 </div>
@@ -229,11 +229,11 @@ export default function Menu() {
                   padding: "7px 12px", borderRadius: 8, opacity: 0.45,
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 9, color: "rgba(13,9,11,0.4)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 9, color: "var(--text-muted)" }}>
                   <Icon />
                   <span style={{ fontSize: 12, fontWeight: 500, fontFamily: "var(--font-inter)" }}>{label}</span>
                 </div>
-                <span style={{ fontSize: 10, color: "rgba(13,9,11,0.3)", fontStyle: "italic", fontFamily: "var(--font-inter)" }}>
+                <span style={{ fontSize: 10, color: "var(--text-muted)", fontStyle: "italic", fontFamily: "var(--font-inter)" }}>
                   Connect
                 </span>
               </div>
@@ -249,18 +249,18 @@ export default function Menu() {
             margin: "8px 4px 0",
             padding: "7px 12px", borderRadius: 9,
             fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 700,
-            color: "#982E52", textDecoration: "none",
-            border: "1px dashed rgba(152,46,82,0.25)",
-            background: "rgba(152,46,82,0.03)",
+            color: "var(--secondary)", textDecoration: "none",
+            border: "1px dashed var(--shadow-rose)",
+            background: "var(--tertiary)",
             transition: "all 0.15s",
           }}
           onMouseEnter={e => {
-            (e.currentTarget as HTMLElement).style.background = "rgba(152,46,82,0.07)";
-            (e.currentTarget as HTMLElement).style.borderColor = "rgba(152,46,82,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "var(--secondary-dim)";
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border-hover)";
           }}
           onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.background = "rgba(152,46,82,0.03)";
-            (e.currentTarget as HTMLElement).style.borderColor = "rgba(152,46,82,0.25)";
+            (e.currentTarget as HTMLElement).style.background = "var(--tertiary)";
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--shadow-rose)";
           }}
         >
           <Plus size={13} strokeWidth={2.5} />
@@ -269,52 +269,52 @@ export default function Menu() {
       </div>
 
       {/* ── Upgrade Card ── */}
-      <div style={{ margin: "12px 12px 0", padding: "14px", borderRadius: 12, background: "#F6F3F2", border: "1px solid rgba(13,9,11,0.07)" }}>
+      <div style={{ margin: "12px 12px 0", padding: "14px", borderRadius: 12, background: "var(--main-background)", border: "1px solid var(--border)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(152,46,82,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <Zap size={13} style={{ color: "#982E52" }} />
+          <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--secondary-dim)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <Zap size={13} style={{ color: "var(--secondary)" }} />
           </div>
           <div>
-            <p style={{ fontSize: 12, fontWeight: 800, color: "#0D090B", fontFamily: "var(--font-inter)", margin: 0 }}>Go Pro</p>
-            <p style={{ fontSize: 10, color: "rgba(13,9,11,0.45)", fontFamily: "var(--font-inter)", margin: 0 }}>Unlimited posts & AI tools</p>
+            <p style={{ fontSize: 12, fontWeight: 800, color: "var(--primary)", fontFamily: "var(--font-inter)", margin: 0 }}>Go Pro</p>
+            <p style={{ fontSize: 10, color: "var(--text-secondary)", fontFamily: "var(--font-inter)", margin: 0 }}>Unlimited posts & AI tools</p>
           </div>
         </div>
         <button
           style={{
             width: "100%", padding: "8px 12px", borderRadius: 9,
-            background: "#982E52", color: "#fff", border: "none",
+            background: "var(--secondary)", color: "var(--btn-primary-text)", border: "none",
             fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 700,
-            cursor: "pointer", boxShadow: "0 2px 8px rgba(152,46,82,0.2)",
+            cursor: "pointer", boxShadow: "0 2px 8px var(--shadow-rose)",
             transition: "all 0.15s",
           }}
-          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#B8435F"}
-          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "#982E52"}
+          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--secondary-light)"}
+          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "var(--secondary)"}
         >
           Upgrade Now →
         </button>
       </div>
 
       {/* ── Footer / User ── */}
-      <div style={{ padding: "12px 12px 16px", borderTop: "1px solid rgba(13,9,11,0.06)", marginTop: 12 }}>
+      <div style={{ padding: "12px 12px 16px", borderTop: "1px solid var(--border)", marginTop: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
           <div style={{
-            width: 34, height: 34, borderRadius: "50%", background: "#982E52",
-            color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+            width: 34, height: 34, borderRadius: "50%", background: "var(--secondary)",
+            color: "var(--btn-primary-text)", display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 13, fontWeight: 900, fontFamily: "var(--font-inter)", flexShrink: 0,
           }}>
             {user?.name?.[0]?.toUpperCase() || "U"}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: "#0D090B", fontFamily: "var(--font-inter)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: "var(--primary)", fontFamily: "var(--font-inter)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {user?.name || "User"}
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
-              <span style={{ fontSize: 10, color: "rgba(13,9,11,0.4)", fontFamily: "var(--font-inter)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 80 }}>
+              <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "var(--font-inter)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 80 }}>
                 {user?.organizationName || "My Org"}
               </span>
               <span style={{
                 padding: "1px 6px", borderRadius: 4,
-                background: "rgba(13,9,11,0.06)", color: "rgba(13,9,11,0.45)",
+                background: "var(--border)", color: "var(--text-secondary)",
                 fontSize: 9, fontWeight: 800, fontFamily: "var(--font-inter)",
                 textTransform: "uppercase", letterSpacing: "0.06em",
               }}>
@@ -324,9 +324,9 @@ export default function Menu() {
           </div>
           <button
             onClick={() => router.push("/settings")}
-            style={{ color: "rgba(13,9,11,0.3)", background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: 6, transition: "color 0.15s" }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#0D090B"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(13,9,11,0.3)"}
+            style={{ color: "var(--text-muted)", background: "none", border: "none", cursor: "pointer", padding: 4, borderRadius: 6, transition: "color 0.15s" }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--primary)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"}
           >
             <Settings size={14} />
           </button>
@@ -338,8 +338,8 @@ export default function Menu() {
             width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
             padding: "7px 12px", borderRadius: 9,
             fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 600,
-            color: "rgba(13,9,11,0.45)", background: "transparent",
-            border: "1px solid rgba(13,9,11,0.08)", cursor: "pointer",
+            color: "var(--text-secondary)", background: "transparent",
+            border: "1px solid var(--border)", cursor: "pointer",
             transition: "all 0.15s",
           }}
           onMouseEnter={e => {
@@ -350,7 +350,7 @@ export default function Menu() {
           onMouseLeave={e => {
             (e.currentTarget as HTMLElement).style.color = "rgba(13,9,11,0.45)";
             (e.currentTarget as HTMLElement).style.background = "transparent";
-            (e.currentTarget as HTMLElement).style.borderColor = "rgba(13,9,11,0.08)";
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
           }}
         >
           <LogOut size={13} />

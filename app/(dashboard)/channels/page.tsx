@@ -7,7 +7,7 @@ const PLATFORMS = [
   { id: "twitter", name: "Twitter / X", color: "#1da1f2", authType: "oauth", fields: [] },
   { id: "linkedin", name: "LinkedIn", color: "#0077b5", authType: "oauth", fields: [] },
   { id: "facebook", name: "Facebook", color: "#1877f2", authType: "oauth", fields: [] },
-  { id: "instagram", name: "Instagram", color: "#e1306c", authType: "oauth", fields: [] },
+  { id: "instagram", name: "Instagram", color: "#e1306c", authType: "custom", fields: [] },
   { id: "youtube", name: "YouTube", color: "#ff0000", authType: "oauth", fields: [] },
   { id: "tiktok", name: "TikTok", color: "#000000", authType: "oauth", fields: [] },
   { id: "pinterest", name: "Pinterest", color: "#e60023", authType: "oauth", fields: [] },
@@ -55,7 +55,11 @@ export default function ChannelsPage() {
       } else {
         let token = "", name = "", internalId = "";
 
-        if (selected.id === "bluesky") {
+        if (selected.id === "instagram_personal") {
+          token = values.handle;
+          name = values.handle;
+          internalId = values.handle;
+        } else if (selected.id === "bluesky") {
           token = values.handle + ":" + values.appPassword;
           name = values.handle;
           internalId = values.handle;
@@ -168,8 +172,71 @@ export default function ChannelsPage() {
         })}
       </div>
 
+      
+      {/* Custom Instagram Choice Modal */}
+      {selected && selected.authType === "custom" && selected.id === "instagram" && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--natural)] border border-[var(--border)] rounded-2xl p-8 w-full max-w-2xl shadow-2xl relative">
+            <button onClick={() => setSelected(null)} className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--primary)] transition">✕</button>
+            <h2 className="text-xl font-bold text-[var(--primary)] mb-2 text-center">How would you like to connect your Instagram Account?</h2>
+            <p className="text-[var(--text-secondary)] text-sm text-center mb-8">Features depend on the type of Instagram account you have and the connection you choose.</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Professional */}
+              <div className="border border-[var(--border)] rounded-xl p-6 hover:border-[var(--secondary-dim)] transition bg-[var(--main-background)] flex flex-col">
+                <h3 className="font-bold text-[var(--primary)] text-lg mb-1">Professional <span className="text-sm font-normal text-[var(--text-muted)]">(Business & Creator)</span></h3>
+                <span className="inline-block bg-[#10b981]/10 text-[#10b981] text-xs font-bold px-2 py-1 rounded-md mb-4 self-start">Automatic & Notification-based</span>
+                
+                <ul className="space-y-3 text-sm text-[var(--text-secondary)] flex-1">
+                  <li className="flex items-start gap-2"><span className="text-[#10b981]">✓</span> <strong>Automatic posting</strong> - You schedule and we post</li>
+                  <li className="flex items-start gap-2"><span className="text-[#10b981]">✓</span> <strong>Notifications</strong> - We notify you, then you finish in app</li>
+                  <li className="flex items-start gap-2"><span className="text-[#10b981]">✓</span> <strong>Community</strong> - Easily reply to comments</li>
+                  <li className="flex items-start gap-2"><span className="text-[#10b981]">✓</span> <strong>Sent Post Metrics</strong> - View past post performance</li>
+                </ul>
+
+                <button 
+                  onClick={async () => {
+                    try {
+                      const res = await integrationsApi.getAuthUrl("instagram");
+                      window.location.href = res.data.url;
+                    } catch (e) { setError("Failed to start OAuth"); }
+                  }}
+                  className="w-full mt-6 py-3 bg-[#a7f3d0] hover:bg-[#6ee7b7] text-[#065f46] font-bold rounded-xl transition"
+                >
+                  Connect to Instagram
+                </button>
+                <p className="text-xs text-[var(--text-muted)] mt-4">ⓘ Instagram will prompt you to easily convert to a professional account if needed.</p>
+              </div>
+
+              {/* Personal */}
+              <div className="border border-[var(--border)] rounded-xl p-6 hover:border-[var(--secondary-dim)] transition bg-[var(--main-background)] flex flex-col">
+                <h3 className="font-bold text-[var(--primary)] text-lg mb-1">Personal</h3>
+                <span className="inline-block bg-[var(--border)] text-[var(--text-secondary)] text-xs font-bold px-2 py-1 rounded-md mb-4 self-start">Notification-Based Posting Only</span>
+                
+                <ul className="space-y-3 text-sm text-[var(--text-secondary)] flex-1">
+                  <li className="flex items-start gap-2"><span className="text-[var(--text-muted)]">✓</span> <strong>Notifications</strong> - We notify you, then you finish in app</li>
+                </ul>
+
+                <button 
+                  onClick={() => setSelected({ 
+                    id: "instagram_personal", 
+                    name: "Instagram (Personal)", 
+                    color: "#e1306c", 
+                    authType: "credentials", 
+                    fields: [{ key: "handle", label: "Instagram Handle (e.g. @johndoe)", type: "text" }] 
+                  })}
+                  className="w-full mt-6 py-3 bg-[var(--natural)] hover:bg-[var(--tertiary)] text-[var(--primary)] font-semibold rounded-xl border border-[var(--border)] transition shadow-sm"
+                >
+                  Setup a Personal Account
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Connect Modal - Glass */}
-      {selected && (
+      {selected && selected.authType !== "custom" && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-[rgba(15,23,42,0.85)] border border-white/[0.05] rounded-2xl p-6 w-full max-w-md shadow-2xl backdrop-blur-[16px]">
             <div className="flex items-center gap-3 mb-6">

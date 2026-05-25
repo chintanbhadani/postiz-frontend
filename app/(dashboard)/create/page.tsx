@@ -73,8 +73,8 @@ export default function CreatePostPage() {
   return (
     <div className="p-8 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Create Post</h1>
-        <p className="text-gray-500 mt-1">Compose and schedule your social media post</p>
+        <h1 className="text-2xl font-bold text-[var(--primary)]">Create Post</h1>
+        <p className="text-[var(--text-muted)] mt-1">Compose and schedule your social media post</p>
       </div>
 
       {integrations.length === 0 ? (
@@ -82,7 +82,7 @@ export default function CreatePostPage() {
           <div className="text-4xl mb-4 opacity-60">🔗</div>
           <p className="text-amber-300 font-medium mb-2">No channels connected</p>
           <p className="text-amber-400/50 text-sm mb-4">Connect at least one social media account first.</p>
-          <a href="/channels" className="px-4 py-2 bg-[#6366f1] hover:bg-[#5558e6] text-white rounded-xl text-sm transition shadow-[0_0_15px_rgba(99,102,241,0.35)]">
+          <a href="/channels" className="btn-primary px-4 py-2 text-sm">
             Go to Channels
           </a>
         </div>
@@ -99,7 +99,7 @@ export default function CreatePostPage() {
               <Form className="space-y-6">
                 {/* Channel Selector */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">Post to</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Post to</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {integrations.map((int) => (
                       <button
@@ -108,19 +108,19 @@ export default function CreatePostPage() {
                         onClick={() => setFieldValue("integrationId", int.id)}
                         className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
                           values.integrationId === int.id
-                            ? "border-[#6366f1] bg-[rgba(99,102,241,0.1)] shadow-[0_0_15px_rgba(99,102,241,0.15)]"
-                            : "border-white/[0.05] bg-[rgba(15,23,42,0.35)] backdrop-blur-[12px] hover:border-white/[0.1]"
+                            ? "border-[var(--secondary)] bg-[var(--secondary-dim)] shadow-[var(--shadow-rose)]"
+                            : "border-[var(--border)] bg-[var(--natural)] backdrop-blur-[12px] hover:border-[var(--border-hover)]"
                         }`}
                       >
                         <div
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--primary)] text-xs font-bold flex-shrink-0"
                           style={{ backgroundColor: PLATFORM_COLORS[int.platform] || "#6b7280" }}
                         >
                           {int.platform?.[0]?.toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-white text-sm font-medium truncate">{int.name}</p>
-                          <p className="text-gray-500 text-xs capitalize">{int.platform}</p>
+                          <p className="text-[var(--primary)] text-sm font-medium truncate">{int.name}</p>
+                          <p className="text-[var(--text-muted)] text-xs capitalize">{int.platform}</p>
                         </div>
                       </button>
                     ))}
@@ -133,8 +133,8 @@ export default function CreatePostPage() {
                 {/* Content Textarea */}
                 <div>
                   <div className="flex justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-300">Content</label>
-                    <span className={`text-xs ${charCount > 280 ? "text-[#f87171]" : "text-gray-500"}`}>
+                    <label className="text-sm font-medium text-[var(--text-secondary)]">Content</label>
+                    <span className={`text-xs ${charCount > 280 ? "text-[#f87171]" : "text-[var(--text-muted)]"}`}>
                       {charCount} chars
                     </span>
                   </div>
@@ -149,8 +149,8 @@ export default function CreatePostPage() {
                     rows={6}
                     required
                     placeholder="What do you want to share?"
-                    className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition resize-none backdrop-blur-[12px] ${
-                      touched.content && errors.content ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                    className={`w-full bg-[var(--natural)] border rounded-xl px-4 py-3 text-[var(--primary)] placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] focus:border-[var(--border-hover)] transition resize-none backdrop-blur-[12px] ${
+                      touched.content && errors.content ? "border-[rgba(248,113,113,0.3)]" : "border-[var(--border)]"
                     }`}
                   />
                   {touched.content && errors.content && (
@@ -161,7 +161,7 @@ export default function CreatePostPage() {
                 {/* Date/Time Pickers */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Date</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Date</label>
                     <input
                       type="date"
                       name="publishDate"
@@ -170,8 +170,8 @@ export default function CreatePostPage() {
                       onBlur={handleBlur}
                       min={new Date().toISOString().split("T")[0]}
                       required
-                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] [color-scheme:dark] ${
-                        touched.publishDate && errors.publishDate ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                      className={`w-full bg-[var(--natural)] border rounded-xl px-4 py-3 text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] focus:border-[var(--border-hover)] transition backdrop-blur-[12px] [color-scheme:dark] ${
+                        touched.publishDate && errors.publishDate ? "border-[rgba(248,113,113,0.3)]" : "border-[var(--border)]"
                       }`}
                     />
                     {touched.publishDate && errors.publishDate && (
@@ -179,7 +179,7 @@ export default function CreatePostPage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Time</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Time</label>
                     <input
                       type="time"
                       name="publishTime"
@@ -187,8 +187,8 @@ export default function CreatePostPage() {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       required
-                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] [color-scheme:dark] ${
-                        touched.publishTime && errors.publishTime ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                      className={`w-full bg-[var(--natural)] border rounded-xl px-4 py-3 text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] focus:border-[var(--border-hover)] transition backdrop-blur-[12px] [color-scheme:dark] ${
+                        touched.publishTime && errors.publishTime ? "border-[rgba(248,113,113,0.3)]" : "border-[var(--border)]"
                       }`}
                     />
                     {touched.publishTime && errors.publishTime && (
@@ -199,7 +199,7 @@ export default function CreatePostPage() {
 
                 {/* Publish Preview */}
                 {values.publishDate && values.publishTime && (
-                  <div className="bg-[rgba(99,102,241,0.05)] border border-[rgba(99,102,241,0.15)] rounded-xl px-4 py-3 text-sm text-[#818cf8] backdrop-blur-[12px]">
+                  <div className="bg-[var(--secondary-dim)] border border-[var(--border-hover)] rounded-xl px-4 py-3 text-sm text-[var(--secondary)] backdrop-blur-[12px]">
                     Will publish: {new Date(`${values.publishDate}T${values.publishTime}`).toLocaleString()}
                     {selectedIntegration && ` on ${selectedIntegration.name} (${selectedIntegration.platform})`}
                   </div>
@@ -214,7 +214,7 @@ export default function CreatePostPage() {
                     type="submit"
                     onClick={() => setFieldValue("state", "DRAFT")}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-3 bg-[rgba(15,23,42,0.35)] hover:bg-[rgba(15,23,42,0.55)] text-gray-300 font-medium rounded-xl border border-white/[0.05] transition disabled:opacity-50 cursor-pointer backdrop-blur-[12px]"
+                    className="flex-1 px-4 py-3 bg-[var(--natural)] hover:bg-[var(--tertiary)] text-[var(--text-secondary)] font-medium rounded-xl border border-[var(--border)] transition disabled:opacity-50 cursor-pointer backdrop-blur-[12px]"
                   >
                     {isSubmitting && values.state === "DRAFT" ? "Saving..." : "Save as Draft"}
                   </button>
@@ -222,7 +222,7 @@ export default function CreatePostPage() {
                     type="submit"
                     onClick={() => setFieldValue("state", "QUEUE")}
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-3 bg-[#6366f1] hover:bg-[#5558e6] text-white font-semibold rounded-xl transition shadow-[0_0_15px_rgba(99,102,241,0.35)] hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] disabled:opacity-50 cursor-pointer"
+                    className="flex-1 btn-primary px-4 py-3"
                   >
                     {isSubmitting && values.state === "QUEUE" ? "Scheduling..." : "Schedule Post"}
                   </button>

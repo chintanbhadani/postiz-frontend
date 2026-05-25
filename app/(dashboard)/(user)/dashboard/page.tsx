@@ -42,7 +42,7 @@ export default function CreatePostPage() {
         publishTime: timeStr,
         state: "QUEUE"
       });
-    }).catch(() => {});
+    }).catch(() => { });
   }, []);
 
   const handleSubmit = async (values: any, { setSubmitting }: any) => {
@@ -105,11 +105,10 @@ export default function CreatePostPage() {
                         key={int.id}
                         type="button"
                         onClick={() => setFieldValue("integrationId", int.id)}
-                        className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
-                          values.integrationId === int.id
+                        className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${values.integrationId === int.id
                             ? "border-[#6366f1] bg-[rgba(99,102,241,0.1)] shadow-[0_0_15px_rgba(99,102,241,0.15)]"
                             : "border-white/[0.05] bg-[rgba(15,23,42,0.35)] backdrop-blur-[12px] hover:border-white/[0.1]"
-                        }`}
+                          }`}
                       >
                         <div
                           className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
@@ -147,9 +146,8 @@ export default function CreatePostPage() {
                     rows={6}
                     required
                     placeholder="What do you want to share?"
-                    className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition resize-none backdrop-blur-[12px] ${
-                      touched.content && errors.content ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
-                    }`}
+                    className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition resize-none backdrop-blur-[12px] ${touched.content && errors.content ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                      }`}
                   />
                   {touched.content && errors.content && (
                     <span className="text-[#f87171] text-xs mt-1 block">{errors.content}</span>
@@ -167,9 +165,8 @@ export default function CreatePostPage() {
                       onBlur={handleBlur}
                       min={new Date().toISOString().split("T")[0]}
                       required
-                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] [color-scheme:dark] ${
-                        touched.publishDate && errors.publishDate ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
-                      }`}
+                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] [color-scheme:dark] ${touched.publishDate && errors.publishDate ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                        }`}
                     />
                     {touched.publishDate && errors.publishDate && (
                       <span className="text-[#f87171] text-xs mt-1 block">{errors.publishDate}</span>
@@ -184,9 +181,8 @@ export default function CreatePostPage() {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       required
-                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] [color-scheme:dark] ${
-                        touched.publishTime && errors.publishTime ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
-                      }`}
+                      className={`w-full bg-[rgba(15,23,42,0.35)] border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px] [color-scheme:dark] ${touched.publishTime && errors.publishTime ? "border-[rgba(248,113,113,0.3)]" : "border-white/[0.05]"
+                        }`}
                     />
                     {touched.publishTime && errors.publishTime && (
                       <span className="text-[#f87171] text-xs mt-1 block">{errors.publishTime}</span>

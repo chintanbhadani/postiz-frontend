@@ -5,6 +5,7 @@ import { AuthProvider } from "../context/auth.context";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { ToastContainer } from "react-toastify";
 import { Providers } from "./provider";
+import { ThemeProvider } from "./theme-provider";
 
 const syne = Syne({
   subsets: ["latin"],
@@ -27,9 +28,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${syne.variable} ${inter.variable}`}>
+    <html lang="en" className={`${syne.variable} ${inter.variable}`} suppressHydrationWarning>
       <body style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-        <AppRouterCacheProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AppRouterCacheProvider>
           <AuthProvider>
             <ToastContainer
               position="top-right"
@@ -43,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Providers>{children}</Providers>
           </AuthProvider>
         </AppRouterCacheProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

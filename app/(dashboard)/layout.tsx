@@ -39,8 +39,8 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#030712] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#6366f1] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[var(--main-background)] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[var(--secondary)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -48,7 +48,7 @@ export default function DashboardLayout({
   if (!user) return null;
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#030712" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "var(--main-background)" }}>
       <CssBaseline />
 
       {/* Top Header Bar - Glass */}
@@ -56,12 +56,10 @@ export default function DashboardLayout({
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          background: "rgba(15, 23, 42, 0.55)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-          color: "#f9fafb",
-          boxShadow: "none",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+          background: "var(--natural)",
+          color: "var(--primary)",
+          boxShadow: "var(--shadow-sm)",
+          borderBottom: "1px solid var(--border)",
         }}
       >
         <Toolbar
@@ -78,28 +76,28 @@ export default function DashboardLayout({
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ color: "rgba(255,255,255,0.5)" }}
+              sx={{ color: "var(--text-secondary)" }}
             >
               <MenuIcon />
             </IconButton>
 
             <Link href="/" className="flex items-center gap-2.5">
               <div className="relative w-7 h-7 flex-shrink-0">
-                <div className="absolute inset-0 bg-[#6366f1] rounded-lg transform -rotate-6 opacity-60 blur-[2px]"></div>
-                <div className="absolute inset-0 bg-[#6366f1] rounded-lg transform rotate-2 opacity-80"></div>
-                <div className="absolute inset-0 bg-[#6366f1] rounded-lg flex items-center justify-center shadow-[0_0_12px_rgba(99,102,241,0.4)]">
-                  <span className="text-white text-sm font-black">P</span>
+                <div className="absolute inset-0 bg-[var(--secondary)] rounded-lg transform -rotate-6 opacity-60 blur-[2px]"></div>
+                <div className="absolute inset-0 bg-[var(--secondary)] rounded-lg transform rotate-2 opacity-80"></div>
+                <div className="absolute inset-0 bg-[var(--secondary)] rounded-lg flex items-center justify-center" style={{ boxShadow: 'var(--shadow-rose)' }}>
+                  <span className="text-[var(--btn-primary-text)] text-sm font-black">P</span>
                 </div>
               </div>
-              <span className="text-white font-black text-xl tracking-tight">Postiz</span>
+              <span className="text-[var(--primary)] font-black text-xl tracking-tight">Postiz</span>
             </Link>
           </Box>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <div className="w-8 h-8 rounded-full bg-[rgba(99,102,241,0.15)] text-[#6366f1] flex items-center justify-center font-bold text-sm border border-[rgba(99,102,241,0.2)]">
+            <div className="w-8 h-8 rounded-full bg-[var(--secondary-dim)] text-[var(--secondary)] flex items-center justify-center font-bold text-sm border border-[var(--secondary-dim)]">
               {user?.name?.[0]?.toUpperCase() || "U"}
             </div>
-            <span className="text-xs font-bold text-gray-300 hidden sm:inline">{user?.name}</span>
+            <span className="text-xs font-bold text-[var(--text-secondary)] hidden sm:inline">{user?.name}</span>
           </Box>
         </Toolbar>
       </AppBar>
@@ -133,7 +131,8 @@ export default function DashboardLayout({
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: drawerWidth,
-            borderRight: "1px solid rgba(255, 255, 255, 0.05)",
+            borderRight: "1px solid var(--border)",
+            background: "var(--main-background)",
           },
         }}
       >
@@ -145,7 +144,7 @@ export default function DashboardLayout({
         component="main"
         sx={{
           flexGrow: 1,
-          bgcolor: "#030712",
+          bgcolor: "var(--main-background)",
           minHeight: "100vh",
           marginLeft: {
             xs: 0,

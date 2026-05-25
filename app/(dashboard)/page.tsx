@@ -28,10 +28,10 @@ const PLATFORM_COLORS: Record<string, string> = {
 };
 
 const STATE_STYLES: Record<string, string> = {
-  QUEUE: "bg-[rgba(99,102,241,0.1)] text-[#818cf8] border border-[rgba(99,102,241,0.2)]",
+  QUEUE: "bg-[var(--secondary-dim)] text-[var(--secondary)] border border-[var(--secondary-dim)]",
   POSTED: "bg-[rgba(52,211,153,0.1)] text-[#34d399] border border-[rgba(52,211,153,0.2)]",
   ERROR: "bg-[rgba(248,113,113,0.1)] text-[#f87171] border border-[rgba(248,113,113,0.2)]",
-  DRAFT: "bg-[rgba(255,255,255,0.03)] text-gray-400 border border-white/[0.05]",
+  DRAFT: "bg-[var(--tertiary)] text-[var(--text-secondary)] border border-[var(--border)]",
 };
 
 function groupByDate(posts: any[]) {
@@ -140,12 +140,12 @@ export default function CalendarPage() {
       {/* Toast Saved Alert */}
       {showToast && (
         <div className="mb-6 flex justify-center">
-          <div className="flex items-center gap-2 bg-[rgba(99,102,241,0.08)] border border-[rgba(99,102,241,0.15)] text-gray-200 px-4 py-2 rounded-full backdrop-blur-[12px] text-xs font-semibold">
-            <Check size={14} className="text-[#6366f1]" />
+          <div className="flex items-center gap-2 bg-[var(--secondary-dim)] border border-[var(--border-hover)] text-[var(--primary)] px-4 py-2 rounded-full backdrop-blur-[12px] text-xs font-semibold">
+            <Check size={14} className="text-[var(--secondary)]" />
             <span>Great! Your preferences have been saved</span>
             <button
               onClick={() => setShowToast(false)}
-              className="ml-2 text-gray-500 hover:text-gray-300 transition-colors"
+              className="ml-2 text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
             >
               <X size={12} />
             </button>
@@ -158,15 +158,15 @@ export default function CalendarPage() {
 
         {/* User Account Info */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[rgba(99,102,241,0.15)] text-[#6366f1] flex items-center justify-center font-black text-lg border border-[rgba(99,102,241,0.2)] uppercase shadow-[0_0_12px_rgba(99,102,241,0.15)]">
+          <div className="w-12 h-12 rounded-full bg-[var(--secondary-dim)] text-[var(--secondary)] flex items-center justify-center font-black text-lg border border-[var(--border-hover)] uppercase shadow-[var(--shadow-rose)]">
             {user?.name?.[0] || "U"}
           </div>
           <div>
-            <h2 className="text-base font-bold text-white flex items-center gap-1">
+            <h2 className="text-base font-bold text-[var(--primary)] flex items-center gap-1">
               <span>{user?.name?.toLowerCase().replace(/\s+/g, '') || "user"}</span>
-              <Settings size={13} className="text-gray-500 hover:text-gray-300 cursor-pointer transition-colors ml-1" />
+              <Settings size={13} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer transition-colors ml-1" />
             </h2>
-            <button className="text-[10px] text-gray-500 hover:text-[#818cf8] font-bold transition-colors">
+            <button className="text-[10px] text-[var(--text-muted)] hover:text-[var(--secondary)] font-bold transition-colors">
               + Set a posting goal
             </button>
           </div>
@@ -176,16 +176,16 @@ export default function CalendarPage() {
         <div className="flex items-center gap-3 self-end sm:self-auto">
 
           {/* Layout Mode buttons - Glass capsule */}
-          <div className="flex items-center border border-white/[0.05] rounded-xl bg-[rgba(15,23,42,0.35)] backdrop-blur-[12px] p-0.5">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-gray-500 hover:text-white rounded-lg transition-colors">
+          <div className="flex items-center border border-[var(--border)] rounded-xl card backdrop-blur-[12px] p-0.5">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-[var(--text-muted)] hover:text-[var(--primary)] rounded-lg transition-colors">
               <Grid size={13} />
               <span>Grid</span>
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold bg-[rgba(99,102,241,0.1)] text-white rounded-lg border border-[rgba(99,102,241,0.2)] transition-colors">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold bg-[var(--secondary-dim)] text-[var(--primary)] rounded-lg border border-[var(--border-hover)] transition-colors">
               <ListIcon size={13} />
               <span>List</span>
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-gray-500 hover:text-white rounded-lg transition-colors">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-[var(--text-muted)] hover:text-[var(--primary)] rounded-lg transition-colors">
               <CalendarIcon size={13} />
               <span>Calendar</span>
             </button>
@@ -194,7 +194,7 @@ export default function CalendarPage() {
           {/* New Post Button */}
           <Link
             href="/create"
-            className="px-4 py-2 bg-[#6366f1] hover:bg-[#5558e6] text-white font-bold text-[11px] rounded-xl transition-all border border-[rgba(99,102,241,0.3)] flex items-center gap-1.5 shadow-[0_0_15px_rgba(99,102,241,0.35)] hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]"
+            className="btn-primary px-4 py-2 text-[11px] flex items-center gap-1.5"
           >
             <Plus size={13} strokeWidth={2.5} />
             <span>New Post</span>
@@ -226,12 +226,12 @@ export default function CalendarPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`pb-3 text-sm font-semibold transition-all relative ${activeTab === tab.id
-                ? "text-white border-b-2 border-[#6366f1] font-bold"
-                : "text-gray-500 hover:text-gray-300"
+                ? "text-[var(--primary)] border-b-2 border-[var(--secondary)] font-bold"
+                : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
               }`}
             >
               <span className="capitalize">{tab.label}</span>
-              <span className="ml-1.5 px-1.5 py-0.2 bg-[rgba(255,255,255,0.03)] text-gray-400 text-[10px] font-bold rounded-full border border-white/[0.05]">
+              <span className="ml-1.5 px-1.5 py-0.2 bg-[var(--tertiary)] text-[var(--text-secondary)] text-[10px] font-bold rounded-full border border-[var(--border)]">
                 {tab.count}
               </span>
             </button>
@@ -240,15 +240,15 @@ export default function CalendarPage() {
 
         {/* Filters and Timezone */}
         <div className="flex items-center gap-2 self-end md:self-auto pb-2 md:pb-0">
-          <button className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-gray-400 hover:text-white transition-colors bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-xl backdrop-blur-[8px]">
-            <Tag size={12} className="text-gray-500" />
+          <button className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors card border border-[var(--border)] rounded-xl backdrop-blur-[8px]">
+            <Tag size={12} className="text-[var(--text-muted)]" />
             <span>Tags</span>
           </button>
-          <button className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-gray-400 hover:text-white transition-colors bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-xl backdrop-blur-[8px]">
-            <Globe size={12} className="text-gray-500" />
+          <button className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors card border border-[var(--border)] rounded-xl backdrop-blur-[8px]">
+            <Globe size={12} className="text-[var(--text-muted)]" />
             <span className="truncate max-w-[80px]">{cleanTimeZone}</span>
           </button>
-          <button className="p-1.5 text-gray-500 hover:text-white transition-colors bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-xl backdrop-blur-[8px]">
+          <button className="p-1.5 text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors card border border-[var(--border)] rounded-xl backdrop-blur-[8px]">
             <MoreVertical size={13} />
           </button>
         </div>
@@ -261,43 +261,43 @@ export default function CalendarPage() {
         {/* Timeline Area */}
         <div className="flex-1 w-full">
           {loading ? (
-            <div className="flex items-center justify-center py-20 bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-2xl backdrop-blur-[12px]">
-              <div className="w-8 h-8 border-2 border-[#6366f1] border-t-transparent rounded-full animate-spin" />
+            <div className="flex items-center justify-center py-20 card border border-[var(--border)] rounded-2xl backdrop-blur-[12px]">
+              <div className="w-8 h-8 border-2 border-[var(--secondary)] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : Object.keys(groups).length === 0 ? (
 
             activeTab === "queue" ? (
               <div className="space-y-6">
 
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
+                <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-4">
                   Tomorrow, {new Date(Date.now() + 86400000).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                 </h3>
 
                 <div className="flex items-start">
 
-                  <div className="w-16 text-right pr-4 text-xs font-bold text-gray-500 pt-3">
+                  <div className="w-16 text-right pr-4 text-xs font-bold text-[var(--text-muted)] pt-3">
                     8:02 PM
                   </div>
 
                   <div className="relative flex flex-col items-center w-8 pt-3.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#6366f1] border-2 border-[#030712] z-10 shadow-[0_0_6px_rgba(99,102,241,0.4)]" />
-                    <div className="absolute top-6 bottom-0 w-0.5 bg-white/[0.03]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[var(--secondary)] border-2 border-[var(--main-background)] z-10 shadow-[var(--shadow-rose)]" />
+                    <div className="absolute top-6 bottom-0 w-0.5 bg-[var(--border)]" />
                   </div>
 
                   <div className="flex-1 pb-4">
                     <Link
                       href="/create"
-                      className="group/slot flex items-center justify-between bg-[rgba(15,23,42,0.35)] border border-dashed border-white/[0.08] hover:border-[#6366f1] rounded-xl p-5 transition-all cursor-pointer backdrop-blur-[12px]"
+                      className="group/slot flex items-center justify-between card border border-dashed border-[var(--border)] hover:border-[var(--secondary)] rounded-xl p-5 transition-all cursor-pointer backdrop-blur-[12px]"
                     >
-                      <div className="text-xs text-gray-400 font-medium group-hover/slot:text-[#818cf8] transition-colors leading-relaxed">
-                        <span className="font-bold text-white">+ Great time to post!</span> Create a{" "}
-                        <span className="underline decoration-1 underline-offset-2 decoration-[#6366f1]/50">new post</span> or{" "}
-                        <span className="underline decoration-1 underline-offset-2 decoration-[#6366f1]/50">start with a template</span>.
+                      <div className="text-xs text-[var(--text-secondary)] font-medium group-hover/slot:text-[var(--secondary)] transition-colors leading-relaxed">
+                        <span className="font-bold text-[var(--primary)]">+ Great time to post!</span> Create a{" "}
+                        <span className="underline decoration-1 underline-offset-2 decoration-[var(--secondary)]">new post</span> or{" "}
+                        <span className="underline decoration-1 underline-offset-2 decoration-[var(--secondary)]">start with a template</span>.
                       </div>
-                      <ArrowRight size={14} className="text-gray-600 group-hover/slot:text-[#6366f1] group-hover/slot:translate-x-0.5 transition-all flex-shrink-0" />
+                      <ArrowRight size={14} className="text-[var(--text-muted)] group-hover/slot:text-[var(--secondary)] group-hover/slot:translate-x-0.5 transition-all flex-shrink-0" />
                     </Link>
 
-                    <button className="text-[10px] text-gray-500 hover:text-[#818cf8] transition-colors font-bold mt-3 ml-1">
+                    <button className="text-[10px] text-[var(--text-muted)] hover:text-[var(--secondary)] transition-colors font-bold mt-3 ml-1">
                       + More Recommended Times
                     </button>
                   </div>
@@ -306,16 +306,16 @@ export default function CalendarPage() {
 
               </div>
             ) : (
-              <div className="text-center py-20 bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-2xl backdrop-blur-[12px]">
+              <div className="text-center py-20 card border border-[var(--border)] rounded-2xl backdrop-blur-[12px]">
                 <div className="text-4xl mb-3 opacity-40">📭</div>
-                <h4 className="text-sm font-bold text-white capitalize">No {activeTab} posts</h4>
-                <p className="text-xs text-gray-500 mt-1 max-w-xs mx-auto">
+                <h4 className="text-sm font-bold text-[var(--primary)] capitalize">No {activeTab} posts</h4>
+                <p className="text-xs text-[var(--text-muted)] mt-1 max-w-xs mx-auto">
                   {activeTab === "drafts" && "Jot down your thoughts and schedule them later."}
                   {activeTab === "approvals" && "All clear! There are no failed posts or items requiring approval."}
                   {activeTab === "sent" && "Once you publish post updates, they will appear in this tab."}
                 </p>
                 {activeTab !== "sent" && (
-                  <Link href="/create" className="mt-4 inline-block px-4 py-2 bg-[#6366f1] hover:bg-[#5558e6] text-white text-xs font-semibold rounded-xl transition-colors shadow-[0_0_15px_rgba(99,102,241,0.35)]">
+                  <Link href="/create" className="btn-primary mt-4 inline-block px-4 py-2 text-xs">
                     Create new post
                   </Link>
                 )}
@@ -327,7 +327,7 @@ export default function CalendarPage() {
               {Object.entries(groups).map(([date, datePosts], grpIdx) => (
                 <div key={date}>
 
-                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
+                  <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest mb-4">
                     {getSmartDateHeading(date)}
                   </h3>
 
@@ -342,31 +342,31 @@ export default function CalendarPage() {
                       return (
                         <div key={post.id} className="flex items-start">
 
-                          <div className="w-16 text-right pr-4 text-xs font-bold text-gray-500 pt-4 flex-shrink-0">
+                          <div className="w-16 text-right pr-4 text-xs font-bold text-[var(--text-muted)] pt-4 flex-shrink-0">
                             {publishTime}
                           </div>
 
                           <div className="relative flex flex-col items-center w-8 pt-4.5 flex-shrink-0">
-                            <div className="w-2.5 h-2.5 rounded-full bg-[#6366f1] border-2 border-[#030712] z-10 shadow-[0_0_6px_rgba(99,102,241,0.4)]" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-[var(--secondary)] border-2 border-[var(--main-background)] z-10 shadow-[var(--shadow-rose)]" />
                             {!(grpIdx === Object.keys(groups).length - 1 && idx === datePosts.length - 1) && (
-                              <div className="absolute top-7 bottom-0 w-0.5 bg-white/[0.03]" />
+                              <div className="absolute top-7 bottom-0 w-0.5 bg-[var(--border)]" />
                             )}
                           </div>
 
                           {/* Post Card - Glass */}
                           <div className="flex-1 pb-6 min-w-0">
-                            <div className="bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-xl p-4 hover:border-[rgba(99,102,241,0.15)] transition duration-150 backdrop-blur-[12px] relative group flex flex-col gap-2">
+                            <div className="card border border-[var(--border)] rounded-xl p-4 hover:border-[var(--border-hover)] transition duration-150 backdrop-blur-[12px] relative group flex flex-col gap-2">
 
                               <div className="flex items-center justify-between gap-3">
                                 <div className="flex items-center gap-2 min-w-0">
                                   <div
-                                    className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-black uppercase flex-shrink-0"
+                                    className="w-6 h-6 rounded-md flex items-center justify-center text-[var(--primary)] text-[10px] font-black uppercase flex-shrink-0"
                                     style={{ backgroundColor: PLATFORM_COLORS[platform] || "#6b7280" }}
                                   >
                                     {platform[0]}
                                   </div>
                                   <div className="min-w-0">
-                                    <span className="text-xs font-bold text-gray-200 truncate block">
+                                    <span className="text-xs font-bold text-[var(--primary)] truncate block">
                                       {post.integration?.name || "Connected Profile"}
                                     </span>
                                   </div>
@@ -377,14 +377,14 @@ export default function CalendarPage() {
 
                                 <button
                                   onClick={() => deletePost(post.id)}
-                                  className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 transition p-1 hover:bg-[rgba(248,113,113,0.05)] rounded-lg flex-shrink-0 focus:opacity-100"
+                                  className="opacity-0 group-hover:opacity-100 text-[var(--text-muted)] hover:text-red-400 transition p-1 hover:bg-[rgba(248,113,113,0.05)] rounded-lg flex-shrink-0 focus:opacity-100"
                                   title="Delete post"
                                 >
                                   <Trash2 size={13} />
                                 </button>
                               </div>
 
-                              <p className="text-xs text-gray-300 font-medium leading-relaxed break-words whitespace-pre-wrap">
+                              <p className="text-xs text-[var(--text-secondary)] font-medium leading-relaxed break-words whitespace-pre-wrap">
                                 {post.content}
                               </p>
 
@@ -399,7 +399,7 @@ export default function CalendarPage() {
                                   href={post.releaseUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-[10px] font-bold text-[#818cf8] hover:text-[#6366f1] inline-flex items-center gap-0.5 mt-1 self-start"
+                                  className="text-[10px] font-bold text-[var(--secondary)] hover:text-[var(--secondary)] inline-flex items-center gap-0.5 mt-1 self-start"
                                 >
                                   <span>View post</span>
                                   <ArrowRight size={10} />
@@ -425,22 +425,22 @@ export default function CalendarPage() {
         <div className="w-full lg:w-72 flex-shrink-0 flex flex-col gap-4">
 
           {/* Suggestion Card 1 */}
-          <div className="bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-xl p-4.5 backdrop-blur-[12px] relative overflow-hidden group hover:border-[rgba(99,102,241,0.1)] transition-all duration-200">
+          <div className="card border border-[var(--border)] rounded-xl p-4.5 backdrop-blur-[12px] relative overflow-hidden group hover:border-[var(--border-hover)] transition-all duration-200">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg bg-[rgba(245,158,11,0.1)] text-amber-400 flex items-center justify-center flex-shrink-0">
                 <Film size={15} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-bold text-white">Behind the Scenes</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0 shadow-[0_0_6px_rgba(245,158,11,0.4)]" />
+                  <span className="text-xs font-bold text-[var(--primary)]">Behind the Scenes</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0 shadow-[var(--shadow-sm)]" />
                 </div>
-                <p className="text-[11px] text-gray-500 mt-1 leading-relaxed">
+                <p className="text-[11px] text-[var(--text-muted)] mt-1 leading-relaxed">
                   Show how something you care about gets made or done. Transparency builds trust!
                 </p>
                 <Link
                   href="/create"
-                  className="text-[10px] text-[#818cf8] hover:text-[#6366f1] font-bold mt-2.5 inline-flex items-center gap-0.5"
+                  className="text-[10px] text-[var(--secondary)] hover:text-[var(--secondary)] font-bold mt-2.5 inline-flex items-center gap-0.5"
                 >
                   <span>Create post</span>
                   <ArrowRight size={10} />
@@ -450,22 +450,22 @@ export default function CalendarPage() {
           </div>
 
           {/* Suggestion Card 2 */}
-          <div className="bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-xl p-4.5 backdrop-blur-[12px] relative overflow-hidden group hover:border-[rgba(99,102,241,0.1)] transition-all duration-200">
+          <div className="card border border-[var(--border)] rounded-xl p-4.5 backdrop-blur-[12px] relative overflow-hidden group hover:border-[var(--border-hover)] transition-all duration-200">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[rgba(99,102,241,0.1)] text-[#818cf8] flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-[var(--secondary-dim)] text-[var(--secondary)] flex items-center justify-center flex-shrink-0">
                 <BookOpen size={15} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-bold text-white">Struggle to create?</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#6366f1] flex-shrink-0 shadow-[0_0_6px_rgba(99,102,241,0.4)]" />
+                  <span className="text-xs font-bold text-[var(--primary)]">Struggle to create?</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--secondary)] flex-shrink-0 shadow-[var(--shadow-rose)]" />
                 </div>
-                <p className="text-[11px] text-gray-500 mt-1 leading-relaxed">
+                <p className="text-[11px] text-[var(--text-muted)] mt-1 leading-relaxed">
                   Try writing short, rough thoughts and saving them as drafts. You can polish them later!
                 </p>
                 <Link
                   href="/create"
-                  className="text-[10px] text-[#818cf8] hover:text-[#6366f1] font-bold mt-2.5 inline-flex items-center gap-0.5"
+                  className="text-[10px] text-[var(--secondary)] hover:text-[var(--secondary)] font-bold mt-2.5 inline-flex items-center gap-0.5"
                 >
                   <span>Write a draft</span>
                   <ArrowRight size={10} />

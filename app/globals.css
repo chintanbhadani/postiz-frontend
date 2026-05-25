@@ -3,9 +3,9 @@
 /* ── Brand Design Tokens ── */
 :root {
   --primary: #0D090B;
-  --secondary: #982E52;
-  --secondary-light: #B8435F;
-  --secondary-dim: rgba(152, 46, 82, 0.08);
+  --secondary: #A5D8FF;
+  --secondary-light: #BCE2FF;
+  --secondary-dim: rgba(165, 216, 255, 0.15);
   --tertiary: #F6F3F2;
   --natural: #FFFFFF;
   --natural-variant: #F5F5F5;
@@ -16,12 +16,40 @@
 
   /* Derived */
   --border: rgba(13, 9, 11, 0.08);
-  --border-hover: rgba(152, 46, 82, 0.25);
+  --border-hover: rgba(165, 216, 255, 0.4);
   --text-muted: rgba(13, 9, 11, 0.4);
   --text-secondary: rgba(13, 9, 11, 0.6);
   --shadow-sm: 0 1px 3px rgba(13, 9, 11, 0.06), 0 1px 2px rgba(13, 9, 11, 0.04);
   --shadow-md: 0 4px 16px rgba(13, 9, 11, 0.08), 0 2px 6px rgba(13, 9, 11, 0.04);
-  --shadow-rose: 0 4px 16px rgba(152, 46, 82, 0.18);
+  --shadow-rose: 0 4px 16px rgba(165, 216, 255, 0.3);
+  --btn-primary-text: #0D090B;
+
+  --font-inter: 'Inter', sans-serif;
+  --font-syne: 'Syne', sans-serif;
+}
+
+.dark {
+  --primary: #FCFAF9;
+  --secondary: #A5D8FF;
+  --secondary-light: #89C7FF;
+  --secondary-dim: rgba(165, 216, 255, 0.15);
+  --tertiary: #1A1A1A;
+  --natural: #121212;
+  --natural-variant: #1E1E1E;
+  --error: #FF6B6B;
+  --main-background: #09090B;
+  --success: #8CE05A;
+  --warning: #FFD166;
+
+  /* Derived */
+  --border: rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(165, 216, 255, 0.4);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --shadow-rose: 0 4px 16px rgba(165, 216, 255, 0.15);
+  --btn-primary-text: #0D090B;
 
   --font-inter: 'Inter', sans-serif;
   --font-syne: 'Syne', sans-serif;
@@ -81,13 +109,13 @@ body {
 
 .card-rose:hover {
   border-color: var(--border-hover);
-  box-shadow: 0 4px 20px rgba(152, 46, 82, 0.1);
+  box-shadow: 0 4px 20px rgba(165, 216, 255, 0.1);
 }
 
 /* ── Rose accent button ── */
 .btn-primary {
   background: var(--secondary);
-  color: var(--natural);
+  color: var(--btn-primary-text);
   font-family: var(--font-inter);
   font-weight: 700;
   border-radius: 10px;
@@ -98,7 +126,7 @@ body {
 
 .btn-primary:hover {
   background: var(--secondary-light);
-  box-shadow: 0 6px 20px rgba(152, 46, 82, 0.25);
+  box-shadow: 0 6px 20px rgba(165, 216, 255, 0.25);
   transform: translateY(-1px);
 }
 
@@ -184,7 +212,7 @@ select {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(152, 46, 82, 0.3);
+  background: rgba(165, 216, 255, 0.3);
 }
 
 /* ── Animations ── */
