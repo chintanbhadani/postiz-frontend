@@ -12,25 +12,43 @@ const PLATFORMS = [
   { id: "tiktok", name: "TikTok", color: "#000000", authType: "oauth", fields: [] },
   { id: "pinterest", name: "Pinterest", color: "#e60023", authType: "oauth", fields: [] },
   { id: "reddit", name: "Reddit", color: "#ff4500", authType: "oauth", fields: [] },
-  { id: "bluesky", name: "BlueSky", color: "#0085ff", authType: "credentials",
-    fields: [{ key: "handle", label: "Handle (e.g. user.bsky.social)", type: "text" }, { key: "appPassword", label: "App Password", type: "password" }] },
+  {
+    id: "bluesky", name: "BlueSky", color: "#0085ff", authType: "credentials",
+    fields: [{ key: "handle", label: "Handle (e.g. user.bsky.social)", type: "text" }, { key: "appPassword", label: "App Password", type: "password" }]
+  },
   { id: "threads", name: "Threads", color: "#101010", authType: "oauth", fields: [] },
-  { id: "telegram", name: "Telegram", color: "#0088cc", authType: "token",
-    fields: [{ key: "botToken", label: "Bot Token (from @BotFather)", type: "password" }, { key: "chatId", label: "Channel/Chat ID", type: "text" }] },
-  { id: "discord", name: "Discord", color: "#5865f2", authType: "token",
-    fields: [{ key: "botToken", label: "Bot Token", type: "password" }, { key: "channelId", label: "Channel ID", type: "text" }] },
-  { id: "slack", name: "Slack", color: "#4a154b", authType: "token",
-    fields: [{ key: "token", label: "Bot OAuth Token", type: "password" }, { key: "channelId", label: "Channel ID", type: "text" }] },
-  { id: "mastodon", name: "Mastodon", color: "#6364ff", authType: "token",
-    fields: [{ key: "instance", label: "Instance (e.g. mastodon.social)", type: "text" }, { key: "token", label: "Access Token", type: "password" }] },
-  { id: "medium", name: "Medium", color: "#000000", authType: "token",
-    fields: [{ key: "token", label: "Integration Token", type: "password" }] },
-  { id: "devto", name: "Dev.to", color: "#0a0a0a", authType: "token",
-    fields: [{ key: "apiKey", label: "API Key", type: "password" }] },
-  { id: "hashnode", name: "Hashnode", color: "#2962ff", authType: "token",
-    fields: [{ key: "token", label: "Personal Access Token", type: "password" }, { key: "publicationId", label: "Publication ID", type: "text" }] },
-  { id: "wordpress", name: "WordPress", color: "#21759b", authType: "credentials",
-    fields: [{ key: "siteUrl", label: "Site URL (e.g. https://mysite.com)", type: "text" }, { key: "username", label: "Username", type: "text" }, { key: "appPassword", label: "Application Password", type: "password" }] },
+  {
+    id: "telegram", name: "Telegram", color: "#0088cc", authType: "token",
+    fields: [{ key: "botToken", label: "Bot Token (from @BotFather)", type: "password" }, { key: "chatId", label: "Channel/Chat ID", type: "text" }]
+  },
+  {
+    id: "discord", name: "Discord", color: "#5865f2", authType: "token",
+    fields: [{ key: "botToken", label: "Bot Token", type: "password" }, { key: "channelId", label: "Channel ID", type: "text" }]
+  },
+  {
+    id: "slack", name: "Slack", color: "#4a154b", authType: "token",
+    fields: [{ key: "token", label: "Bot OAuth Token", type: "password" }, { key: "channelId", label: "Channel ID", type: "text" }]
+  },
+  {
+    id: "mastodon", name: "Mastodon", color: "#6364ff", authType: "token",
+    fields: [{ key: "instance", label: "Instance (e.g. mastodon.social)", type: "text" }, { key: "token", label: "Access Token", type: "password" }]
+  },
+  {
+    id: "medium", name: "Medium", color: "#000000", authType: "token",
+    fields: [{ key: "token", label: "Integration Token", type: "password" }]
+  },
+  {
+    id: "devto", name: "Dev.to", color: "#0a0a0a", authType: "token",
+    fields: [{ key: "apiKey", label: "API Key", type: "password" }]
+  },
+  {
+    id: "hashnode", name: "Hashnode", color: "#2962ff", authType: "token",
+    fields: [{ key: "token", label: "Personal Access Token", type: "password" }, { key: "publicationId", label: "Publication ID", type: "text" }]
+  },
+  {
+    id: "wordpress", name: "WordPress", color: "#21759b", authType: "credentials",
+    fields: [{ key: "siteUrl", label: "Site URL (e.g. https://mysite.com)", type: "text" }, { key: "username", label: "Username", type: "text" }, { key: "appPassword", label: "Application Password", type: "password" }]
+  },
 ];
 
 export default function ChannelsPage() {
@@ -39,8 +57,12 @@ export default function ChannelsPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  console.log(" Sucess :: ", success);
+  console.log(" Error  :: ", error);
+
+
   useEffect(() => {
-    integrationsApi.list().then((res) => setIntegrations(res.data)).catch(() => {});
+    integrationsApi.list().then((res) => setIntegrations(res.data)).catch(() => { });
   }, []);
 
   const isConnected = (platformId: string) => integrations.some((i) => i.platform === platformId);
@@ -51,6 +73,9 @@ export default function ChannelsPage() {
     try {
       if (selected.authType === "oauth") {
         const res = await integrationsApi.getAuthUrl(selected.id);
+
+        console.log(" getAuthUrl res :: ", res);
+
         window.location.href = res.data.url;
       } else {
         let token = "", name = "", internalId = "";
@@ -109,7 +134,7 @@ export default function ChannelsPage() {
     try {
       await integrationsApi.disconnect(id);
       setIntegrations((prev) => prev.filter((i) => i.id !== id));
-    } catch (e) {}
+    } catch (e) { }
   };
 
   return (
@@ -118,6 +143,18 @@ export default function ChannelsPage() {
         <h1 className="text-2xl font-bold text-white">Social Channels</h1>
         <p className="text-gray-500 mt-1">Connect your social media accounts to start scheduling</p>
       </div>
+
+      {error && (
+        <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 font-medium">
+          Error: {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-8 p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-500 font-medium">
+          {success}
+        </div>
+      )}
 
       {integrations.length > 0 && (
         <div className="mb-8">
@@ -151,11 +188,10 @@ export default function ChannelsPage() {
             <button
               key={platform.id}
               onClick={() => { if (!connected) { setSelected(platform); setError(""); } }}
-              className={`p-4 rounded-2xl border text-left transition-all group relative ${
-                connected
-                  ? "border-[rgba(52,211,153,0.15)] bg-[rgba(52,211,153,0.03)] cursor-default"
-                  : "border-white/[0.05] bg-[rgba(15,23,42,0.35)] backdrop-blur-[12px] hover:border-[rgba(99,102,241,0.2)] hover:bg-[rgba(99,102,241,0.03)] cursor-pointer"
-              }`}
+              className={`p-4 rounded-2xl border text-left transition-all group relative ${connected
+                ? "border-[rgba(52,211,153,0.15)] bg-[rgba(52,211,153,0.03)] cursor-default"
+                : "border-white/[0.05] bg-[rgba(15,23,42,0.35)] backdrop-blur-[12px] hover:border-[rgba(99,102,241,0.2)] hover:bg-[rgba(99,102,241,0.03)] cursor-pointer"
+                }`}
             >
               <div className="w-10 h-10 rounded-xl mb-3 flex items-center justify-center text-white font-bold text-sm"
                 style={{ backgroundColor: platform.color }}>
@@ -172,7 +208,7 @@ export default function ChannelsPage() {
         })}
       </div>
 
-      
+
       {/* Custom Instagram Choice Modal */}
       {selected && selected.authType === "custom" && selected.id === "instagram" && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -180,13 +216,13 @@ export default function ChannelsPage() {
             <button onClick={() => setSelected(null)} className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--primary)] transition">✕</button>
             <h2 className="text-xl font-bold text-[var(--primary)] mb-2 text-center">How would you like to connect your Instagram Account?</h2>
             <p className="text-[var(--text-secondary)] text-sm text-center mb-8">Features depend on the type of Instagram account you have and the connection you choose.</p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Professional */}
               <div className="border border-[var(--border)] rounded-xl p-6 hover:border-[var(--secondary-dim)] transition bg-[var(--main-background)] flex flex-col">
                 <h3 className="font-bold text-[var(--primary)] text-lg mb-1">Professional <span className="text-sm font-normal text-[var(--text-muted)]">(Business & Creator)</span></h3>
                 <span className="inline-block bg-[#10b981]/10 text-[#10b981] text-xs font-bold px-2 py-1 rounded-md mb-4 self-start">Automatic & Notification-based</span>
-                
+
                 <ul className="space-y-3 text-sm text-[var(--text-secondary)] flex-1">
                   <li className="flex items-start gap-2"><span className="text-[#10b981]">✓</span> <strong>Automatic posting</strong> - You schedule and we post</li>
                   <li className="flex items-start gap-2"><span className="text-[#10b981]">✓</span> <strong>Notifications</strong> - We notify you, then you finish in app</li>
@@ -194,7 +230,7 @@ export default function ChannelsPage() {
                   <li className="flex items-start gap-2"><span className="text-[#10b981]">✓</span> <strong>Sent Post Metrics</strong> - View past post performance</li>
                 </ul>
 
-                <button 
+                <button
                   onClick={async () => {
                     try {
                       const res = await integrationsApi.getAuthUrl("instagram");
@@ -212,18 +248,18 @@ export default function ChannelsPage() {
               <div className="border border-[var(--border)] rounded-xl p-6 hover:border-[var(--secondary-dim)] transition bg-[var(--main-background)] flex flex-col">
                 <h3 className="font-bold text-[var(--primary)] text-lg mb-1">Personal</h3>
                 <span className="inline-block bg-[var(--border)] text-[var(--text-secondary)] text-xs font-bold px-2 py-1 rounded-md mb-4 self-start">Notification-Based Posting Only</span>
-                
+
                 <ul className="space-y-3 text-sm text-[var(--text-secondary)] flex-1">
                   <li className="flex items-start gap-2"><span className="text-[var(--text-muted)]">✓</span> <strong>Notifications</strong> - We notify you, then you finish in app</li>
                 </ul>
 
-                <button 
-                  onClick={() => setSelected({ 
-                    id: "instagram_personal", 
-                    name: "Instagram (Personal)", 
-                    color: "#e1306c", 
-                    authType: "credentials", 
-                    fields: [{ key: "handle", label: "Instagram Handle (e.g. @johndoe)", type: "text" }] 
+                <button
+                  onClick={() => setSelected({
+                    id: "instagram_personal",
+                    name: "Instagram (Personal)",
+                    color: "#e1306c",
+                    authType: "credentials",
+                    fields: [{ key: "handle", label: "Instagram Handle (e.g. @johndoe)", type: "text" }]
                   })}
                   className="w-full mt-6 py-3 bg-[var(--natural)] hover:bg-[var(--tertiary)] text-[var(--primary)] font-semibold rounded-xl border border-[var(--border)] transition shadow-sm"
                 >

@@ -32,19 +32,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body style={{ fontFamily: "var(--font-inter), sans-serif" }}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppRouterCacheProvider>
-          <AuthProvider>
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              toastStyle={{
-                fontFamily: "var(--font-inter), sans-serif",
-                fontSize: "13px",
-                borderRadius: "12px",
-              }}
-            />
-            <Providers>{children}</Providers>
-          </AuthProvider>
-        </AppRouterCacheProvider>
+            <Providers>
+              <AuthProvider>
+                <ToastContainer
+                  position="top-right"
+                  autoClose={3000}
+                  toastStyle={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontSize: "13px",
+                    borderRadius: "12px",
+                  }}
+                />
+                {children}
+              </AuthProvider>
+            </Providers>
+          </AppRouterCacheProvider>
         </ThemeProvider>
       </body>
     </html>
