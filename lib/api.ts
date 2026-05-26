@@ -23,9 +23,16 @@ export const integrationsApi = {
   getAuthUrl: (platform: string) => api.get(`/integrations/${platform}/auth-url`),
   connect: (data: any) => api.post("/integrations", data),
   disconnect: (id: string) => api.delete(`/integrations/${id}`),
+  callback: (platform: string, code: string, state: string) =>
+    api.get(`/integrations/${platform}/callback`, { params: { code, state } }),
   /** Instagram isBetweenSteps: fetch the list of pages after OAuth */
   instagramGetPages: (accessToken: string) =>
-    api.get("/integrations/instagram/pages", { params: { accessToken } }),
+    api.get(`/integrations/instagram/pages`, { 
+      params: { 
+        accessToken,
+        _t: Date.now() // Prevent aggressive browser caching (304 Not Modified)
+      } 
+    }),
   /** Instagram isBetweenSteps: save integration after user picks a page */
   instagramSelectPage: (data: { accessToken: string; pageId: string; igAccountId: string }) =>
     api.post("/integrations/instagram/select-page", data),

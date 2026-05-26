@@ -4,6 +4,7 @@ import { authApi } from "../lib/api";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { setToken, setLoggedUser } from "../store/slice/Base";
+import Cookies from "js-cookie";
 
 interface AuthContextType {
   user: any;
@@ -39,6 +40,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Store in Redux instead of fetching /me later
     dispatch(setToken(res.data.token));
     dispatch(setLoggedUser(res.data.user));
+    // Also set as a cookie so Route Handlers can read it server-side
+    Cookies.set("auth_token", res.data.token, { expires: 7, sameSite: "lax" });
 
     setUser(res.data.user);
     setOrg(res.data.organization);
@@ -50,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const res = await authApi.register(data);
     dispatch(setToken(res.data.token));
     dispatch(setLoggedUser(res.data.user));
+    Cookies.set("auth_token", res.data.token, { expires: 7, sameSite: "lax" });
     setUser(res.data.user);
     setOrg(res.data.organization);
     router.push("/");
@@ -59,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await authApi.logout();
     dispatch(setToken(null));
     dispatch(setLoggedUser(null));
+    Cookies.remove("auth_token");
     setUser(null);
     setOrg(null);
     router.push("/login");
