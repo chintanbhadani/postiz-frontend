@@ -17,6 +17,12 @@ const InstagramIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const FacebookIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+  </svg>
+);
+
 const CheckCircleIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
@@ -34,11 +40,11 @@ const AlertCircleIcon = ({ className }: { className?: string }) => (
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-interface InstagramPage {
-  pageId: string;
+interface SocialPage {
+  pageId?: string; // used for instagram pages internally
   id: string;
   name: string;
-  picture: { data: { url: string } };
+  picture?: { data?: { url?: string } };
 }
 
 type Status = "loading" | "select_page" | "success" | "error";
@@ -56,7 +62,7 @@ export default function AuthCallbackUIPage() {
 
   const [status, setStatus] = useState<Status>(oauthError ? "error" : step === "success" ? "success" : step === "select_page" ? "loading" : "loading");
   const [errorMessage, setErrorMessage] = useState(oauthError);
-  const [pages, setPages] = useState<InstagramPage[]>([]);
+  const [pages, setPages] = useState<SocialPage[]>([]);
   const [selectedPageId, setSelectedPageId] = useState("");
   const [isFinishing, setIsFinishing] = useState(false);
   const [pageSelectError, setPageSelectError] = useState("");
@@ -64,30 +70,38 @@ export default function AuthCallbackUIPage() {
 
   const platformName = platform ? platform.charAt(0).toUpperCase() + platform.slice(1) : "";
 
-  console.log(pages, "   pages");
-  console.log(step, "   step");
-
-  // Load Instagram pages when step=select_page
+  // Load pages when step=select_page
   useEffect(() => {
-    console.log(Cookies.get("ig_access_token"), " Callback ig_access_token");
-
     if (step !== "select_page") return;
-    const igToken = Cookies.get("ig_access_token");
-    if (!igToken) {
+    const token = Cookies.get("oauth_access_token") || Cookies.get("ig_access_token");
+    if (!token) {
       setStatus("error");
-      setErrorMessage("Instagram session expired. Please reconnect from the Channels page.");
+      setErrorMessage(`${platformName} session expired. Please reconnect from the Channels page.`);
       return;
     }
-    integrationsApi.instagramGetPages(igToken)
-      .then((res) => {
-        setPages(res.data || []);
-        setStatus("select_page");
-      })
-      .catch((err: any) => {
-        setStatus("error");
-        setErrorMessage(err?.response?.data?.message || "Failed to fetch Instagram Business pages.");
-      });
-  }, [step]);
+
+    if (platform === "facebook") {
+      integrationsApi.facebookGetPages(token)
+        .then((res) => {
+          setPages(res.data || []);
+          setStatus("select_page");
+        })
+        .catch((err: any) => {
+          setStatus("error");
+          setErrorMessage(err?.response?.data?.message || "Failed to fetch Facebook Pages.");
+        });
+    } else {
+      integrationsApi.instagramGetPages(token)
+        .then((res) => {
+          setPages(res.data || []);
+          setStatus("select_page");
+        })
+        .catch((err: any) => {
+          setStatus("error");
+          setErrorMessage(err?.response?.data?.message || "Failed to fetch Instagram Business pages.");
+        });
+    }
+  }, [step, platform, platformName]);
 
   // Auto-redirect on success
   useEffect(() => {
@@ -97,21 +111,28 @@ export default function AuthCallbackUIPage() {
     return () => clearTimeout(t);
   }, [status, countdown, router]);
 
-  const handleSelectPage = async (page: InstagramPage) => {
-    const igToken = Cookies.get("ig_access_token") || "";
-    setSelectedPageId(page.pageId);
+  const handleSelectPage = async (page: SocialPage) => {
+    const token = Cookies.get("oauth_access_token") || Cookies.get("ig_access_token") || "";
+    setSelectedPageId(page.id); // for UI state we can just use page.id
     setIsFinishing(true);
     setPageSelectError("");
     try {
-      await integrationsApi.instagramSelectPage({ accessToken: igToken, pageId: page.pageId, igAccountId: page.id });
+      if (platform === "facebook") {
+        await integrationsApi.facebookSelectPage({ accessToken: token, pageId: page.id });
+      } else {
+        await integrationsApi.instagramSelectPage({ accessToken: token, pageId: page.pageId as string, igAccountId: page.id });
+      }
+      Cookies.remove("oauth_access_token");
       Cookies.remove("ig_access_token");
       setStatus("success");
     } catch (err: any) {
       setIsFinishing(false);
       setSelectedPageId("");
-      setPageSelectError(err?.response?.data?.message || "Failed to connect the selected Instagram Business Page.");
+      setPageSelectError(err?.response?.data?.message || `Failed to connect the selected ${platformName} account.`);
     }
   };
+
+  const isFacebook = platform === "facebook";
 
   return (
     <div className="flex min-h-screen w-full bg-[#030712] relative items-center justify-center p-4 overflow-y-auto">
@@ -149,7 +170,7 @@ export default function AuthCallbackUIPage() {
             </h2>
             <p className="text-gray-400 max-w-sm text-sm">
               {step === "select_page"
-                ? "Fetching your Facebook Pages & Instagram Business accounts…"
+                ? "Fetching your pages & accounts…"
                 : `Finalising your ${platformName || "social"} connection…`}
             </p>
           </div>
@@ -197,42 +218,27 @@ export default function AuthCallbackUIPage() {
           </div>
         )}
 
-        {/* ── Instagram Page Selection ── */}
+        {/* ── Page Selection ── */}
         {status === "select_page" && (
           <div className="w-full">
             {pages.length === 0 ? (
               <div className="w-full flex flex-col items-center">
-                <div className="w-16 h-16 mb-4 flex items-center justify-center bg-yellow-500/10 rounded-full border border-yellow-500/20">
-                  <InstagramIcon className="w-8 h-8 text-yellow-500" />
+                <div className={`w-16 h-16 mb-4 flex items-center justify-center ${isFacebook ? 'bg-blue-500/10 border-blue-500/20' : 'bg-yellow-500/10 border-yellow-500/20'} rounded-full border`}>
+                  {isFacebook ? <FacebookIcon className="w-8 h-8 text-blue-500" /> : <InstagramIcon className="w-8 h-8 text-yellow-500" />}
                 </div>
-                <h2 className="text-xl font-bold text-white mb-2">No Instagram Accounts Found</h2>
+                <h2 className="text-xl font-bold text-white mb-2">No {platformName} Accounts Found</h2>
                 <p className="text-gray-400 text-sm mb-6 max-w-sm">
-                  We authenticated with Facebook but couldn&apos;t find any Instagram Business accounts linked to your Facebook Pages.
+                  We authenticated with Facebook but couldn&apos;t find any {isFacebook ? 'Facebook Pages' : 'Instagram Business accounts'} linked to your account.
                 </p>
-                <div className="w-full text-left bg-white/[0.02] border border-white/[0.05] rounded-2xl p-5 mb-8 text-sm space-y-4">
-                  {[
-                    { n: 1, title: "Switch Instagram to Business", desc: "Open Instagram app > Settings > Account Type and switch to a Professional Account." },
-                    { n: 2, title: "Link Instagram to a Facebook Page", desc: "Go to your Facebook Page Settings > Linked Accounts > Instagram and click Connect Account." },
-                    { n: 3, title: "Grant All Facebook Permissions", desc: "During the OAuth dialog, make sure to grant all permissions for Pages and Instagram accounts." },
-                  ].map(({ n, title, desc }) => (
-                    <div key={n} className="flex gap-3">
-                      <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">{n}</div>
-                      <div>
-                        <p className="font-semibold text-white text-sm">{title}</p>
-                        <p className="text-gray-400 text-xs mt-0.5">{desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
                 <Link href="/channels" className="px-6 py-3 w-full bg-[#6366f1] hover:bg-[#5558e6] text-white font-bold rounded-xl transition shadow-[0_0_15px_rgba(99,102,241,0.35)] text-center">
                   Back to Channels
                 </Link>
               </div>
             ) : (
               <div className="w-full flex flex-col items-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Connect Instagram Business</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Connect {platformName} {isFacebook ? 'Page' : 'Business'}</h2>
                 <p className="text-gray-400 text-sm mb-6 max-w-sm">
-                  Select the Instagram Business account you want to connect to Postiz.
+                  Select the {platformName} account you want to connect to Postiz.
                 </p>
                 {pageSelectError && (
                   <div className="w-full bg-red-500/5 border border-red-500/20 rounded-xl p-3 mb-4 text-left text-xs text-[#f87171]">
@@ -241,14 +247,14 @@ export default function AuthCallbackUIPage() {
                 )}
                 <div className="w-full space-y-3 mb-8 max-h-[300px] overflow-y-auto pr-1">
                   {pages.map((page) => {
-                    const isSelected = selectedPageId === page.pageId;
+                    const isSelected = selectedPageId === page.id;
                     const imageUrl = page.picture?.data?.url;
                     return (
-                      <div key={page.pageId} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${isSelected ? "border-[#6366f1] bg-[#6366f1]/5 shadow-[0_0_15px_rgba(99,102,241,0.1)]" : "border-white/[0.05] bg-white/[0.02] hover:border-white/[0.1] hover:bg-white/[0.04]"}`}>
+                      <div key={page.id} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${isSelected ? "border-[#6366f1] bg-[#6366f1]/5 shadow-[0_0_15px_rgba(99,102,241,0.1)]" : "border-white/[0.05] bg-white/[0.02] hover:border-white/[0.1] hover:bg-white/[0.04]"}`}>
                         <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 bg-white/5 flex-shrink-0 flex items-center justify-center">
                           {imageUrl
                             ? <img src={imageUrl} alt={page.name} className="w-full h-full object-cover" />  /* eslint-disable-line @next/next/no-img-element */
-                            : <InstagramIcon className="w-6 h-6 text-white/55" />}
+                            : (isFacebook ? <FacebookIcon className="w-6 h-6 text-white/55" /> : <InstagramIcon className="w-6 h-6 text-white/55" />)}
                         </div>
                         <div className="flex-1 text-left min-w-0">
                           <p className="text-white text-sm font-semibold truncate">{page.name}</p>

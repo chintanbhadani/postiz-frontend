@@ -36,6 +36,17 @@ export const integrationsApi = {
   /** Instagram isBetweenSteps: save integration after user picks a page */
   instagramSelectPage: (data: { accessToken: string; pageId: string; igAccountId: string }) =>
     api.post("/integrations/instagram/select-page", data),
+  /** Facebook isBetweenSteps: fetch the list of pages after OAuth */
+  facebookGetPages: (accessToken: string) =>
+    api.get(`/integrations/facebook/pages`, { 
+      params: { 
+        accessToken,
+        _t: Date.now()
+      } 
+    }),
+  /** Facebook isBetweenSteps: save integration after user picks a page */
+  facebookSelectPage: (data: { accessToken: string; pageId: string }) =>
+    api.post("/integrations/facebook/select-page", data),
 };
 
 export default api;

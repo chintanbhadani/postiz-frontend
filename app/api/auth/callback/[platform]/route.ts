@@ -11,8 +11,8 @@ export async function GET(
   const { platform } = await params;
   const { searchParams } = request.nextUrl;
 
-  const code = searchParams.get("code") || "";
-  const state = searchParams.get("state") || "";
+  const code = searchParams.get("code") || searchParams.get("oauth_token") || "";
+  const state = searchParams.get("state") || searchParams.get("oauth_verifier") || "";
   const oauthError = searchParams.get("error") || searchParams.get("error_description") || "";
 
   const uiBase = `${FRONTEND_URL}/auth/callback/${platform}`;
@@ -60,10 +60,10 @@ export async function GET(
     }
 
     if (data.pending && data.accessToken) {
-      // Instagram isBetweenSteps — redirect to page-picker UI with the access token
+      // isBetweenSteps — redirect to page-picker UI with the access token
       const response = NextResponse.redirect(`${uiBase}?step=select_page`);
       // Store the access token in a short-lived cookie for the page-picker UI to read
-      response.cookies.set("ig_access_token", data.accessToken, {
+      response.cookies.set("oauth_access_token", data.accessToken, {
         httpOnly: false, // must be readable by client JS
         maxAge: 600,     // 10 minutes
         path: "/",
