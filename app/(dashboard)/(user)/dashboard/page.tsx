@@ -3,14 +3,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { integrationsApi, postsApi } from "@/lib/api";
+import { integrationsApi, postsApi, uploadsApi } from "@/lib/api";
 
 const createPostSchema = Yup.object().shape({
   content: Yup.string().required("Content is required"),
   integrationId: Yup.string().required("Please select a channel"),
   publishDate: Yup.string().required("Date is required"),
   publishTime: Yup.string().required("Time is required"),
-  state: Yup.string().oneOf(["QUEUE", "DRAFT"]).required()
+  state: Yup.string().oneOf(["QUEUE", "DRAFT"]).required(),
+  images: Yup.array().of(Yup.string())
 });
 
 export default function CreatePostPage() {
@@ -24,8 +25,27 @@ export default function CreatePostPage() {
     integrationId: "",
     publishDate: "",
     publishTime: "",
-    state: "QUEUE" as "QUEUE" | "DRAFT"
+    state: "QUEUE" as "QUEUE" | "DRAFT",
+    images: [] as string[]
   });
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e: any, setFieldValue: any, values: any) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      const res = await uploadsApi.upload(file);
+      const newImages = [...(values.images || []), res.data.url];
+      setFieldValue("images", newImages);
+    } catch (err) {
+      console.error("Upload failed", err);
+      alert("Failed to upload image. Please check your Cloudflare configuration.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     const next = new Date();
@@ -40,7 +60,8 @@ export default function CreatePostPage() {
         integrationId: res.data.length > 0 ? res.data[0].id : "",
         publishDate: dateStr,
         publishTime: timeStr,
-        state: "QUEUE"
+        state: "QUEUE",
+        images: []
       });
     }).catch(() => { });
   }, []);
@@ -55,6 +76,7 @@ export default function CreatePostPage() {
         integrationId: values.integrationId,
         publishDate,
         state: values.state,
+        images: values.images || [],
       });
       setSuccess(values.state === "DRAFT" ? "Saved as draft!" : "Post scheduled successfully!");
       setTimeout(() => router.push("/"), 1200);
@@ -151,6 +173,42 @@ export default function CreatePostPage() {
                   />
                   {touched.content && errors.content && (
                     <span className="text-[#f87171] text-xs mt-1 block">{errors.content}</span>
+                  )}
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-300 mb-3">Media (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={(e) => handleFileUpload(e, setFieldValue, values)}
+                    disabled={uploading}
+                    className="w-full bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-xl px-4 py-3 text-white backdrop-blur-[12px] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#6366f1]/20 file:text-[#818cf8] hover:file:bg-[#6366f1]/40 hover:file:text-white transition cursor-pointer"
+                  />
+                  {uploading && <span className="text-sm text-[#818cf8] mt-2 block animate-pulse">Uploading media...</span>}
+                  
+                  {values.images?.length > 0 && (
+                    <div className="flex flex-wrap gap-4 mt-4">
+                      {values.images.map((img: string, idx: number) => (
+                        <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border border-white/[0.05] group">
+                          {img.match(/\.(mp4|webm|mov)$/i) ? (
+                            <video src={img} className="w-full h-full object-cover" />
+                          ) : (
+                            <img src={img} alt="Preview" className="w-full h-full object-cover" />
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = values.images.filter((_: any, i: number) => i !== idx);
+                              setFieldValue("images", updated);
+                            }}
+                            className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
 

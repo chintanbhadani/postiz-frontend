@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { postsApi, integrationsApi } from "../../../lib/api";
+import { postsApi, integrationsApi, uploadsApi } from "../../../lib/api";
 import { useRouter } from "next/navigation";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -24,8 +24,11 @@ export default function CreatePostPage() {
     integrationId: "",
     publishDate: "",
     publishTime: "",
+    images: [] as string[],
     state: "QUEUE" as "QUEUE" | "DRAFT"
   });
+
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const next = new Date();
@@ -40,6 +43,7 @@ export default function CreatePostPage() {
         integrationId: res.data.length > 0 ? res.data[0].id : "",
         publishDate: dateStr,
         publishTime: timeStr,
+        images: [],
         state: "QUEUE"
       });
     }).catch(() => {});
@@ -54,6 +58,7 @@ export default function CreatePostPage() {
         content: values.content,
         integrationId: values.integrationId,
         publishDate,
+        images: values.images,
         state: values.state,
       });
       setSuccess(values.state === "DRAFT" ? "Saved as draft!" : "Post scheduled successfully!");
@@ -155,6 +160,63 @@ export default function CreatePostPage() {
                   />
                   {touched.content && errors.content && (
                     <span className="text-[#f87171] text-xs mt-1 block">{errors.content}</span>
+                  )}
+                </div>
+
+                {/* File Upload */}
+                <div>
+                  <label className="text-sm font-medium text-[var(--text-secondary)] mb-2 block">Media (Images/Video)</label>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    disabled={uploading}
+                    onChange={async (e) => {
+                      if (!e.target.files?.length) return;
+                      setUploading(true);
+                      setError("");
+                      try {
+                        const newImages = [...values.images];
+                        for (let i = 0; i < e.target.files.length; i++) {
+                          const res = await uploadsApi.upload(e.target.files[i]);
+                          if (res.data.url) {
+                            newImages.push(res.data.url);
+                          }
+                        }
+                        setFieldValue("images", newImages);
+                      } catch (err) {
+                        setError("Failed to upload media. Ensure Cloudflare R2 is configured.");
+                      } finally {
+                        setUploading(false);
+                        e.target.value = "";
+                      }
+                    }}
+                    className="w-full bg-[var(--natural)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--primary)] backdrop-blur-[12px] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--secondary-dim)] file:text-[var(--secondary)] hover:file:bg-[var(--secondary)] hover:file:text-white transition cursor-pointer"
+                  />
+                  {uploading && <span className="text-sm text-[var(--secondary)] mt-2 block animate-pulse">Uploading media...</span>}
+                  
+                  {values.images.length > 0 && (
+                    <div className="flex flex-wrap gap-4 mt-4">
+                      {values.images.map((img: string, idx: number) => (
+                        <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border border-[var(--border)] group">
+                          {img.match(/\.(mp4|webm|mov)$/i) ? (
+                            <video src={img} className="w-full h-full object-cover" />
+                          ) : (
+                            <img src={img} alt="Preview" className="w-full h-full object-cover" />
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = values.images.filter((_: any, i: number) => i !== idx);
+                              setFieldValue("images", updated);
+                            }}
+                            className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
 

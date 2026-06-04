@@ -17,6 +17,18 @@ export const postsApi = {
   delete: (id: string) => api.delete(`/posts/${id}`),
 };
 
+export const uploadsApi = {
+  upload: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/uploads", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+};
+
 export const integrationsApi = {
   platforms: () => api.get("/integrations/platforms"),
   list: () => api.get("/integrations"),
