@@ -53,8 +53,9 @@ export default function Menu() {
     }
   }, [user]);
 
-  const getPlatformIcon = (platform: string) => {
-    const color = PLATFORM_COLORS[platform.toLowerCase()] || "var(--secondary)";
+  const getPlatformIcon = (platform: string = "") => {
+    const p = platform.toLowerCase();
+    const color = PLATFORM_COLORS[p] || "var(--secondary)";
     const icons: Record<string, React.ReactElement> = {
       facebook: <FacebookIcon />,
       twitter: <TwitterIcon />,
@@ -63,7 +64,7 @@ export default function Menu() {
     };
     return (
       <span style={{ color }}>
-        {icons[platform.toLowerCase()] || <Link2 size={15} />}
+        {icons[p] || <Link2 size={15} />}
       </span>
     );
   };
@@ -206,7 +207,7 @@ export default function Menu() {
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
-                  {getPlatformIcon(int.platform)}
+                  {getPlatformIcon(int.platform || int.type)}
                   <span style={{ fontSize: 12, fontWeight: 600, color: "var(--primary)", fontFamily: "var(--font-inter)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {int.name}
                   </span>
