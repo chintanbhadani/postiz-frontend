@@ -59,9 +59,28 @@ export default function AuthCallbackUIPage() {
   const platform = (Array.isArray(params.platform) ? params.platform[0] : params.platform) || "";
   const step = searchParams.get("step") || "";            // "success" | "select_page"
   const oauthError = searchParams.get("error") || "";     // error forwarded from route handler
+  const code = searchParams.get("code") || "";            // OAuth code from provider
+  const state = searchParams.get("state") || "";          // OAuth state from provider
+
+  console.log("[OAuth Callback] Page loaded", { platform, step, code: code ? code.slice(0, 20) + "..." : "(none)", state: state ? state.slice(0, 20) + "..." : "(none)", oauthError: oauthError || "(none)" });
 
   const [status, setStatus] = useState<Status>(oauthError ? "error" : step === "success" ? "success" : step === "select_page" ? "loading" : "loading");
   const [errorMessage, setErrorMessage] = useState(oauthError);
+
+  console.log("[OAuth Callback] Status:", status);
+
+  // If Facebook/Instagram redirected here with a ?code=, forward it to the API route handler
+  useEffect(() => {
+    console.log("[OAuth Callback] useEffect triggered", { code: !!code, step, oauthError: !!oauthError });
+    if (!code || step || oauthError) {
+      console.log("[OAuth Callback] Skipping redirect because:", { noCode: !code, hasStep: !!step, hasError: !!oauthError });
+      return;
+    }
+    // Build the API route URL with the same query params
+    const apiUrl = `/api/auth/callback/${platform}?code=${encodeURIComponent(code)}${state ? `&state=${encodeURIComponent(state)}` : ""}`;
+    console.log("[OAuth Callback] Forwarding to API route:", apiUrl);
+    router.replace(apiUrl);
+  }, [code, step, oauthError, platform, state, router]);
   const [pages, setPages] = useState<SocialPage[]>([]);
   const [selectedPageId, setSelectedPageId] = useState("");
   const [isFinishing, setIsFinishing] = useState(false);

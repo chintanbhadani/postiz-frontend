@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3005/api";
+const BACKEND_URL = (process.env.BACKEND_INTERNAL_URL || "http://localhost:8000") + "/api";
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
 
 export async function GET(
