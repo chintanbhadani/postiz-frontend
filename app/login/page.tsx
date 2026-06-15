@@ -145,6 +145,15 @@ export default function LoginPage() {
               </Form>
             )}
           </Formik>
+
+          <div className="mt-8 pt-6 border-t border-white/[0.05] text-center">
+            <p className="text-xs text-gray-500">
+              <Link href="/privacy-policy" className="hover:text-[#818cf8] transition-colors">Privacy Policy</Link>
+            </p>
+            <p className="text-[10px] text-gray-600 mt-2">
+              &copy; {new Date().getFullYear()} Postilio. A product of VARNI ENTERPRISE.
+            </p>
+          </div>
         </div>
       </div>
 
