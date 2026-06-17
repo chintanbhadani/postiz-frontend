@@ -96,7 +96,7 @@ export default function Menu() {
           </div>
           <div>
             <span style={{ fontFamily: "var(--font-syne)", fontWeight: 400, fontSize: 17, color: "var(--primary)", display: "block", lineHeight: 1.2 }}>
-              Postiz
+              Postilio
             </span>
             <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "var(--font-inter)" }}>
               Social Suite

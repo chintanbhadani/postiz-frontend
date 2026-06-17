@@ -22,7 +22,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Postiz — Social Media Scheduler",
+  title: "Postilio — Social Media Scheduler",
   description: "Schedule and manage your social media posts across all platforms",
 };
 

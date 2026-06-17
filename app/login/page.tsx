@@ -59,12 +59,12 @@ export default function LoginPage() {
                 <span className="text-white text-sm font-black">P</span>
               </div>
             </div>
-            <span className="text-white font-black text-xl tracking-tight">Postiz</span>
+            <span className="text-white font-black text-xl tracking-tight">Postilio</span>
           </div>
 
           <h1 className="text-3xl font-bold text-white mb-2">Log in</h1>
           <p className="text-gray-500 mb-8">
-            New to Postiz?{" "}
+            New to Postilio?{" "}
             <Link href="/register" className="text-[#818cf8] hover:text-[#6366f1] font-medium hover:underline">
               Create an account
             </Link>

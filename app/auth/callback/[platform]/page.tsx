@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { integrationsApi } from "../../../../lib/api";
 import Link from "next/link";
@@ -69,13 +69,34 @@ export default function AuthCallbackUIPage() {
 
   console.log("[OAuth Callback] Status:", status);
 
-  // If Facebook/Instagram redirected here with a ?code=, forward it to the API route handler
+  // Sync status whenever the URL params change (e.g. after router.replace to ?step=success)
+  // useState initial value only runs once, so we need this effect to react to URL changes
+  useEffect(() => {
+    if (oauthError) {
+      setStatus("error");
+      setErrorMessage(oauthError);
+    } else if (step === "success") {
+      setStatus("success");
+    } else if (step === "select_page") {
+      setStatus("loading");
+    }
+  }, [step, oauthError]);
+
+  // Guard against React Strict Mode double-firing the effect
+  const hasForwarded = useRef(false);
+
+  // If provider redirected here with a ?code=, forward it to the API route handler
   useEffect(() => {
     console.log("[OAuth Callback] useEffect triggered", { code: !!code, step, oauthError: !!oauthError });
     if (!code || step || oauthError) {
       console.log("[OAuth Callback] Skipping redirect because:", { noCode: !code, hasStep: !!step, hasError: !!oauthError });
       return;
     }
+    if (hasForwarded.current) {
+      console.log("[OAuth Callback] Already forwarded, skipping duplicate call.");
+      return;
+    }
+    hasForwarded.current = true;
     // Build the API route URL with the same query params
     const apiUrl = `/api/auth/callback/${platform}?code=${encodeURIComponent(code)}${state ? `&state=${encodeURIComponent(state)}` : ""}`;
     console.log("[OAuth Callback] Forwarding to API route:", apiUrl);
@@ -171,7 +192,7 @@ export default function AuthCallbackUIPage() {
               <span className="text-white text-sm font-black">P</span>
             </div>
           </div>
-          <span className="text-white font-black text-xl tracking-tight">Postiz</span>
+          <span className="text-white font-black text-xl tracking-tight">Postilio</span>
         </div>
 
         {/* ── Loading ── */}
@@ -257,7 +278,7 @@ export default function AuthCallbackUIPage() {
               <div className="w-full flex flex-col items-center">
                 <h2 className="text-2xl font-bold text-white mb-2">Connect {platformName} {isFacebook ? 'Page' : 'Business'}</h2>
                 <p className="text-gray-400 text-sm mb-6 max-w-sm">
-                  Select the {platformName} account you want to connect to Postiz.
+                  Select the {platformName} account you want to connect to Postilio.
                 </p>
                 {pageSelectError && (
                   <div className="w-full bg-red-500/5 border border-red-500/20 rounded-xl p-3 mb-4 text-left text-xs text-[#f87171]">

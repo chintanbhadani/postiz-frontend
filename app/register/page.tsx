@@ -53,7 +53,7 @@ export default function RegisterPage() {
                 <span className="text-white text-sm font-black">P</span>
               </div>
             </div>
-            <span className="text-white font-black text-xl tracking-tight">Postiz</span>
+            <span className="text-white font-black text-xl tracking-tight">Postilio</span>
           </div>
 
           <h1 className="text-3xl font-bold text-white mb-2">Create an account</h1>

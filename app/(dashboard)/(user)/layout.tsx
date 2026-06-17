@@ -83,7 +83,7 @@ export default function DashboardLayout({
               <MenuIcon />
             </IconButton>
 
-            {/* Postiz Brand/Logo */}
+            {/* Postilio Brand/Logo */}
             <Link href="/" className="flex items-center gap-2">
               <div className="relative w-7 h-7 flex-shrink-0">
                 <div className="absolute inset-0 bg-[#A3E695] rounded-lg transform -rotate-6"></div>
@@ -92,7 +92,7 @@ export default function DashboardLayout({
                   <span className="text-white text-sm font-black">P</span>
                 </div>
               </div>
-              <span className="text-gray-900 font-black text-xl tracking-tight">Postiz</span>
+              <span className="text-gray-900 font-black text-xl tracking-tight">Postilio</span>
             </Link>
           </Box>
 

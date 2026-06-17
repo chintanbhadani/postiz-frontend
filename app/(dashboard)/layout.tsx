@@ -89,7 +89,7 @@ export default function DashboardLayout({
                   <span className="text-[var(--btn-primary-text)] text-sm font-black">P</span>
                 </div>
               </div>
-              <span className="text-[var(--primary)] font-black text-xl tracking-tight">Postiz</span>
+              <span className="text-[var(--primary)] font-black text-xl tracking-tight">Postilio</span>
             </Link>
           </Box>
 
