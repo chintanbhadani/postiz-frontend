@@ -175,9 +175,11 @@ export default function RegisterPage() {
           </Formik>
 
           <div className="mt-8 pt-6 border-t border-white/[0.05] text-center">
-            <p className="text-xs text-gray-500">
-              <Link href="/privacy-policy" className="hover:text-[#818cf8] transition-colors">Privacy Policy</Link>
-            </p>
+            <div className="flex justify-center gap-4 text-xs text-gray-500 mb-2">
+              <Link href="/privacy-policy" className="hover:text-[#818cf8] transition-colors font-medium">Privacy Policy & Data Deletion</Link>
+              {/* <span>•</span> */}
+              {/* <Link href="/terms" className="hover:text-[#818cf8] transition-colors font-medium">Terms of Service</Link> */}
+            </div>
             <p className="text-[10px] text-gray-600 mt-2">
               &copy; {new Date().getFullYear()} Postilio. A product of VARNI ENTERPRISE.
             </p>

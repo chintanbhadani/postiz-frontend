@@ -11,9 +11,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme, useMediaQuery } from "@mui/material";
-import { useAuth } from "@/context/auth.context";
-// import { useAuth } from "../../context/auth.context";
-import Menu from "../../Components/SideNavigationMenu/Menu";
+import { useAuth } from "../../context/auth.context";
+import Menu from "../Components/SideNavigationMenu/Menu";
 
 const drawerWidth = 240;
 
@@ -40,8 +39,8 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#2e7d32] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[var(--main-background)] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[var(--secondary)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -49,18 +48,18 @@ export default function DashboardLayout({
   if (!user) return null;
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F9F9FB" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "var(--main-background)" }}>
       <CssBaseline />
 
-      {/* Top Header Bar */}
+      {/* Top Header Bar - Glass */}
       <AppBar
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          background: "white",
-          color: "black",
-          boxShadow: "none",
-          borderBottom: "1px solid #e5e7eb",
+          background: "var(--natural)",
+          color: "var(--primary)",
+          boxShadow: "var(--shadow-sm)",
+          borderBottom: "1px solid var(--border)",
         }}
       >
         <Toolbar
@@ -72,48 +71,43 @@ export default function DashboardLayout({
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            {/* Hamburger Toggle Button */}
             <IconButton
               color="inherit"
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ color: "gray.600" }}
+              sx={{ color: "var(--text-secondary)" }}
             >
               <MenuIcon />
             </IconButton>
 
-            {/* Postilio Brand/Logo */}
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/dashboard" className="flex items-center gap-2.5">
               <div className="relative w-7 h-7 flex-shrink-0">
-                <div className="absolute inset-0 bg-[#A3E695] rounded-lg transform -rotate-6"></div>
-                <div className="absolute inset-0 bg-[#8CD57E] rounded-lg transform rotate-3 opacity-90"></div>
-                <div className="absolute inset-0 bg-[#2e7d32] rounded-lg flex items-center justify-center shadow-sm">
-                  <span className="text-white text-sm font-black">P</span>
+                <div className="absolute inset-0 bg-[var(--secondary)] rounded-lg transform -rotate-6 opacity-60 blur-[2px]"></div>
+                <div className="absolute inset-0 bg-[var(--secondary)] rounded-lg transform rotate-2 opacity-80"></div>
+                <div className="absolute inset-0 bg-[var(--secondary)] rounded-lg flex items-center justify-center" style={{ boxShadow: 'var(--shadow-rose)' }}>
+                  <span className="text-[var(--btn-primary-text)] text-sm font-black">P</span>
                 </div>
               </div>
-              <span className="text-gray-900 font-black text-xl tracking-tight">Postilio</span>
+              <span className="text-[var(--primary)] font-black text-xl tracking-tight">Postilio</span>
             </Link>
           </Box>
 
-          {/* User Profile Avatar */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <div className="w-8 h-8 rounded-full bg-[#E8F5E9] text-[#2e7d32] flex items-center justify-center font-bold text-sm border border-[#C8E6C9]">
+            <div className="w-8 h-8 rounded-full bg-[var(--secondary-dim)] text-[var(--secondary)] flex items-center justify-center font-bold text-sm border border-[var(--secondary-dim)]">
               {user?.name?.[0]?.toUpperCase() || "U"}
             </div>
-            <span className="text-xs font-bold text-gray-700 hidden sm:inline">{user?.name}</span>
+            <span className="text-xs font-bold text-[var(--text-secondary)] hidden sm:inline">{user?.name}</span>
           </Box>
         </Toolbar>
       </AppBar>
 
-      {/* Mobile Drawer (Temporary overlay) */}
+      {/* Mobile Drawer */}
       <Drawer
         variant="temporary"
         open={isMobile ? drawerOpen : false}
         onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
-        }}
+        ModalProps={{ keepMounted: true }}
         sx={{
           display: { xs: "block", md: "none" },
           "& .MuiDrawer-paper": {
@@ -126,7 +120,7 @@ export default function DashboardLayout({
         <Menu />
       </Drawer>
 
-      {/* Desktop Drawer (Persistent/Permanent sidebar) */}
+      {/* Desktop Drawer */}
       <Drawer
         variant="persistent"
         anchor="left"
@@ -137,7 +131,8 @@ export default function DashboardLayout({
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: drawerWidth,
-            borderRight: "1px solid #e5e7eb",
+            borderRight: "1px solid var(--border)",
+            background: "var(--main-background)",
           },
         }}
       >
@@ -149,7 +144,7 @@ export default function DashboardLayout({
         component="main"
         sx={{
           flexGrow: 1,
-          bgcolor: "#F9F9FB",
+          bgcolor: "var(--main-background)",
           minHeight: "100vh",
           marginLeft: {
             xs: 0,
@@ -162,7 +157,7 @@ export default function DashboardLayout({
             }),
         }}
       >
-        <Toolbar /> {/* Offsets the content height under the fixed header */}
+        <Toolbar />
         <Box sx={{ p: 4 }}>
           {children}
         </Box>

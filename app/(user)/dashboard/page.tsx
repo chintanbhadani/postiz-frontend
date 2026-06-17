@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { postsApi, integrationsApi } from "../../lib/api";
-import { useAuth } from "../../context/auth.context";
+import { postsApi, integrationsApi } from "../../../lib/api";
+import { useAuth } from "../../../context/auth.context";
 import Link from "next/link";
 import { Grid2x2 as Grid, List as ListIcon, Calendar as CalendarIcon, Plus, Globe, Tag, MoveVertical as MoreVertical, Check, X, Trash2, TriangleAlert as AlertTriangle, Film, BookOpen, ArrowRight, Settings, Clock } from "lucide-react";
 
@@ -133,6 +133,9 @@ export default function CalendarPage() {
     { id: "approvals", label: "Approvals", count: approvalsCount },
     { id: "sent", label: "Sent", count: sentCount },
   ] as const;
+
+  console.log(" main page ...");
+  
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
