@@ -83,27 +83,8 @@ export default function Menu() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--natural)" }}>
-
-      {/* ── Brand ── */}
-      <div style={{ padding: "20px 20px 16px" }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <div style={{
-            width: 34, height: 34, borderRadius: 9, background: "var(--secondary)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 2px 8px var(--shadow-rose)", flexShrink: 0,
-          }}>
-            <span style={{ color: "var(--btn-primary-text)", fontSize: 16, fontWeight: 900, fontFamily: "var(--font-syne)" }}>P</span>
-          </div>
-          <div>
-            <span style={{ fontFamily: "var(--font-syne)", fontWeight: 400, fontSize: 17, color: "var(--primary)", display: "block", lineHeight: 1.2 }}>
-              Postilio
-            </span>
-            <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "var(--font-inter)" }}>
-              Social Suite
-            </span>
-          </div>
-        </Link>
-      </div>
+      {/* Spacer for the fixed AppBar so content doesn't go under it */}
+      <div style={{ minHeight: "70px" }} />
 
       {/* ── Create Post Button ── */}
       <div style={{ padding: "0 12px 12px" }}>
