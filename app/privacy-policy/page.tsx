@@ -1,3 +1,12 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy - Postilio',
+  other: {
+    'tiktok-developers-site-verification': 'yEYIOGd0wknrNXBqwAQRiXSGA5igJxNt',
+  },
+};
+
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-[#030712] text-gray-300 py-12 px-6 sm:px-12 md:px-20 lg:px-32">
