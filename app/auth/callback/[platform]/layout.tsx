@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   other: {
-    'tiktok-developers-site-verification': 'D7oiIPLKkIpPyFrF0dP1MjxemnhfkvKB',
+    'tiktok-developers-site-verification': 'U2SUujrhQDPVUIEKSZDAf3A8O76kxllx',
   },
 };
 
