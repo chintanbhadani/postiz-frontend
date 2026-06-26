@@ -23,6 +23,14 @@ const FacebookIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const LinkedInIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect x="2" y="9" width="4" height="12" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
 const CheckCircleIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
@@ -130,6 +138,16 @@ export default function AuthCallbackUIPage() {
           setStatus("error");
           setErrorMessage(err?.response?.data?.message || "Failed to fetch Facebook Pages.");
         });
+    } else if (platform === "linkedin") {
+      integrationsApi.linkedinGetPages(token)
+        .then((res) => {
+          setPages(res.data || []);
+          setStatus("select_page");
+        })
+        .catch((err: any) => {
+          setStatus("error");
+          setErrorMessage(err?.response?.data?.message || "Failed to fetch LinkedIn Pages.");
+        });
     } else {
       integrationsApi.instagramGetPages(token)
         .then((res) => {
@@ -159,6 +177,8 @@ export default function AuthCallbackUIPage() {
     try {
       if (platform === "facebook") {
         await integrationsApi.facebookSelectPage({ accessToken: token, pageId: page.id });
+      } else if (platform === "linkedin") {
+        await integrationsApi.linkedinSelectPage({ accessToken: token, pageId: page.id });
       } else {
         await integrationsApi.instagramSelectPage({ accessToken: token, pageId: page.pageId as string, igAccountId: page.id });
       }
@@ -173,6 +193,7 @@ export default function AuthCallbackUIPage() {
   };
 
   const isFacebook = platform === "facebook";
+  const isLinkedIn = platform === "linkedin";
 
   return (
     <div className="flex min-h-screen w-full bg-[#030712] relative items-center justify-center p-4 overflow-y-auto">
@@ -263,12 +284,12 @@ export default function AuthCallbackUIPage() {
           <div className="w-full">
             {pages.length === 0 ? (
               <div className="w-full flex flex-col items-center">
-                <div className={`w-16 h-16 mb-4 flex items-center justify-center ${isFacebook ? 'bg-blue-500/10 border-blue-500/20' : 'bg-yellow-500/10 border-yellow-500/20'} rounded-full border`}>
-                  {isFacebook ? <FacebookIcon className="w-8 h-8 text-blue-500" /> : <InstagramIcon className="w-8 h-8 text-yellow-500" />}
+                <div className={`w-16 h-16 mb-4 flex items-center justify-center ${isFacebook ? 'bg-blue-500/10 border-blue-500/20' : isLinkedIn ? 'bg-sky-500/10 border-sky-500/20' : 'bg-yellow-500/10 border-yellow-500/20'} rounded-full border`}>
+                  {isFacebook ? <FacebookIcon className="w-8 h-8 text-blue-500" /> : isLinkedIn ? <LinkedInIcon className="w-8 h-8 text-sky-500" /> : <InstagramIcon className="w-8 h-8 text-yellow-500" />}
                 </div>
                 <h2 className="text-xl font-bold text-white mb-2">No {platformName} Accounts Found</h2>
                 <p className="text-gray-400 text-sm mb-6 max-w-sm">
-                  We authenticated with Facebook but couldn&apos;t find any {isFacebook ? 'Facebook Pages' : 'Instagram Business accounts'} linked to your account.
+                  We authenticated with {platformName} but couldn&apos;t find any {isFacebook ? 'Facebook Pages' : isLinkedIn ? 'LinkedIn Pages/Profiles' : 'Instagram Business accounts'} linked to your account.
                 </p>
                 <Link href="/channels" className="px-6 py-3 w-full bg-[#6366f1] hover:bg-[#5558e6] text-white font-bold rounded-xl transition shadow-[0_0_15px_rgba(99,102,241,0.35)] text-center">
                   Back to Channels
@@ -276,7 +297,7 @@ export default function AuthCallbackUIPage() {
               </div>
             ) : (
               <div className="w-full flex flex-col items-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Connect {platformName} {isFacebook ? 'Page' : 'Business'}</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Connect {platformName} {isFacebook ? 'Page' : isLinkedIn ? 'Profile/Page' : 'Business'}</h2>
                 <p className="text-gray-400 text-sm mb-6 max-w-sm">
                   Select the {platformName} account you want to connect to Postilio.
                 </p>
@@ -288,13 +309,13 @@ export default function AuthCallbackUIPage() {
                 <div className="w-full space-y-3 mb-8 max-h-[300px] overflow-y-auto pr-1">
                   {pages.map((page) => {
                     const isSelected = selectedPageId === page.id;
-                    const imageUrl = page.picture?.data?.url;
+                    const imageUrl = page.picture?.data?.url || (page.picture as any); // LinkedIn picture might be a flat string in details
                     return (
                       <div key={page.id} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${isSelected ? "border-[#6366f1] bg-[#6366f1]/5 shadow-[0_0_15px_rgba(99,102,241,0.1)]" : "border-white/[0.05] bg-white/[0.02] hover:border-white/[0.1] hover:bg-white/[0.04]"}`}>
                         <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 bg-white/5 flex-shrink-0 flex items-center justify-center">
                           {imageUrl
                             ? <img src={imageUrl} alt={page.name} className="w-full h-full object-cover" />  /* eslint-disable-line @next/next/no-img-element */
-                            : (isFacebook ? <FacebookIcon className="w-6 h-6 text-white/55" /> : <InstagramIcon className="w-6 h-6 text-white/55" />)}
+                            : (isFacebook ? <FacebookIcon className="w-6 h-6 text-white/55" /> : isLinkedIn ? <LinkedInIcon className="w-6 h-6 text-white/55" /> : <InstagramIcon className="w-6 h-6 text-white/55" />)}
                         </div>
                         <div className="flex-1 text-left min-w-0">
                           <p className="text-white text-sm font-semibold truncate">{page.name}</p>

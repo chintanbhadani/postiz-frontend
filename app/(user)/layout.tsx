@@ -82,14 +82,8 @@ export default function DashboardLayout({
             </IconButton>
 
             <Link href="/dashboard" className="flex items-center gap-2.5">
-              <div className="relative w-7 h-7 flex-shrink-0">
-                <div className="absolute inset-0 bg-[var(--secondary)] rounded-lg transform -rotate-6 opacity-60 blur-[2px]"></div>
-                <div className="absolute inset-0 bg-[var(--secondary)] rounded-lg transform rotate-2 opacity-80"></div>
-                <div className="absolute inset-0 bg-[var(--secondary)] rounded-lg flex items-center justify-center" style={{ boxShadow: 'var(--shadow-rose)' }}>
-                  <span className="text-[var(--btn-primary-text)] text-sm font-black">P</span>
-                </div>
-              </div>
-              <span className="text-[var(--primary)] font-black text-xl tracking-tight">Postilio</span>
+              <img src="/asset/logo.png" alt="Postilio Logo" className="w-8 h-8 rounded-lg object-contain" />
+              <span className="font-black text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">Postilio</span>
             </Link>
           </Box>
 

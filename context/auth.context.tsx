@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setUser(res.data.user);
     setOrg(res.data.organization);
-    router.push("/");
+    router.push("/dashboard");
     return res;
   };
 
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     Cookies.set("auth_token", res.data.token, { expires: 7, sameSite: "lax" });
     setUser(res.data.user);
     setOrg(res.data.organization);
-    router.push("/");
+    router.push("/dashboard");
   };
 
   const logout = async () => {

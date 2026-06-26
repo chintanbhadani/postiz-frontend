@@ -59,6 +59,17 @@ export const integrationsApi = {
   /** Facebook isBetweenSteps: save integration after user picks a page */
   facebookSelectPage: (data: { accessToken: string; pageId: string }) =>
     api.post("/integrations/facebook/select-page", data),
+  /** LinkedIn isBetweenSteps: fetch the list of pages/profiles after OAuth */
+  linkedinGetPages: (accessToken: string) =>
+    api.get(`/integrations/linkedin/pages`, { 
+      params: { 
+        accessToken,
+        _t: Date.now()
+      } 
+    }),
+  /** LinkedIn isBetweenSteps: save integration after user picks a page */
+  linkedinSelectPage: (data: { accessToken: string; pageId: string }) =>
+    api.post("/integrations/linkedin/select-page", data),
 };
 
 export default api;

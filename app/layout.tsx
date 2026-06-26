@@ -24,6 +24,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Postilio — Social Media Scheduler",
   description: "Schedule and manage your social media posts across all platforms",
+  icons: {
+    icon: "/asset/logo.png",
+    shortcut: "/asset/logo.png",
+    apple: "/asset/logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
