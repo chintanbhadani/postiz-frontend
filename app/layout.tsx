@@ -31,10 +31,27 @@ export const metadata: Metadata = {
   },
 };
 
+import Script from "next/script";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${syne.variable} ${inter.variable}`} suppressHydrationWarning>
       <body style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8KGJSNZ5ED"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-8KGJSNZ5ED');
+          `}
+        </Script>
+        
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppRouterCacheProvider>
             <Providers>
