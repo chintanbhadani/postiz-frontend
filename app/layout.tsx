@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body style={{ fontFamily: "var(--font-inter), sans-serif" }}>
         {/* Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-8KGJSNZ5ED"
+          src="https://www.googletagmanager.com/gtag/js?id=G-JTXH7WHX68"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -48,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             function gtag(){window.dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-8KGJSNZ5ED');
+            gtag('config', 'G-JTXH7WHX68');
           `}
         </Script>
         
