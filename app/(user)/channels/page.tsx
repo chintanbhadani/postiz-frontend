@@ -19,7 +19,7 @@ const PLATFORMS = [
   { id: "threads", name: "Threads", color: "#101010", authType: "oauth", fields: [] },
   {
     id: "telegram", name: "Telegram", color: "#0088cc", authType: "token",
-    fields: [{ key: "botToken", label: "Bot Token (from @BotFather)", type: "password" }, { key: "chatId", label: "Channel/Chat ID", type: "text" }]
+    fields: [{ key: "botToken", label: "Bot Token (from @BotFather)", type: "password" }]
   },
   {
     id: "discord", name: "Discord", color: "#5865f2", authType: "token",
@@ -91,7 +91,7 @@ export default function ChannelsPage() {
         } else if (selected.id === "telegram") {
           token = values.botToken;
           name = "Telegram Bot";
-          internalId = values.chatId;
+          internalId = values.chatId || "";
         } else if (selected.id === "discord") {
           token = values.botToken;
           name = "Discord Channel";
@@ -304,7 +304,7 @@ export default function ChannelsPage() {
                         value={values[field.key] || ""}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        required
+                        required={!field.label.includes("(Optional)")}
                         className="w-full bg-[rgba(15,23,42,0.35)] border border-white/[0.05] rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-[rgba(99,102,241,0.3)] transition backdrop-blur-[12px]"
                       />
                     </div>
