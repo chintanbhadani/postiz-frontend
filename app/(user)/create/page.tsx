@@ -4,6 +4,8 @@ import { postsApi, integrationsApi, uploadsApi } from "../../../lib/api";
 import { useRouter } from "next/navigation";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import { LinkedInPreview } from "../../Components/LinkedInPreview";
+import { LinkedInSettings } from "../../Components/LinkedInSettings";
 
 const createPostSchema = Yup.object().shape({
   content: Yup.string().required("Content is required"),
@@ -76,7 +78,7 @@ export default function CreatePostPage() {
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
+    <div className="p-8 max-w-6xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[var(--primary)]">Create Post</h1>
         <p className="text-[var(--text-muted)] mt-1">Compose and schedule your social media post</p>
@@ -100,8 +102,10 @@ export default function CreatePostPage() {
         >
           {({ values, errors, touched, handleChange, handleBlur, setFieldValue, isSubmitting }) => {
             const selectedIntegration = integrations.find((i) => i.id === values.integrationId);
+            const isLinkedIn = selectedIntegration?.platform?.toLowerCase() === 'linkedin';
             return (
-              <Form className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <Form className="space-y-6">
                 {/* Channel Selector */}
                 <div>
                   <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Post to</label>
@@ -270,6 +274,9 @@ export default function CreatePostPage() {
                 {error && <div className="bg-[rgba(248,113,113,0.05)] border border-[rgba(248,113,113,0.15)] rounded-xl px-4 py-3 text-[#f87171] text-sm">{error}</div>}
                 {success && <div className="bg-[rgba(52,211,153,0.05)] border border-[rgba(52,211,153,0.15)] rounded-xl px-4 py-3 text-[#34d399] text-sm">{success}</div>}
 
+                {/* LinkedIn Settings */}
+                {isLinkedIn && <LinkedInSettings />}
+
                 {/* Submit Buttons */}
                 <div className="flex gap-3">
                   <button
@@ -290,6 +297,25 @@ export default function CreatePostPage() {
                   </button>
                 </div>
               </Form>
+
+                {/* Live Preview Side Panel */}
+                <div className="hidden lg:block">
+                  <div className="sticky top-8">
+                    <h3 className="text-lg font-bold text-[var(--primary)] mb-4">Live Preview</h3>
+                    {isLinkedIn ? (
+                      <LinkedInPreview
+                        content={values.content}
+                        images={values.images}
+                        integration={selectedIntegration}
+                      />
+                    ) : (
+                      <div className="bg-[var(--natural)] border border-[var(--border)] rounded-xl p-8 text-center text-[var(--text-muted)] backdrop-blur-[12px]">
+                        Preview is currently available only for LinkedIn.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             );
           }}
         </Formik>
