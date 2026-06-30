@@ -64,7 +64,7 @@ export default function CreatePostPage() {
         state: values.state,
       });
       setSuccess(values.state === "DRAFT" ? "Saved as draft!" : "Post scheduled successfully!");
-      setTimeout(() => router.push("/"), 1200);
+      setTimeout(() => router.push("/dashboard"), 1200);
     } catch (err: any) {
       setError(err?.response?.data?.message || "Failed to schedule post");
       setSubmitting(false);
