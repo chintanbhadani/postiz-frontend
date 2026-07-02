@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../../../context/auth.context";
 import { useEffect, useState } from "react";
 import { integrationsApi } from "../../../lib/api";
+import { useModal } from "../../../context/modal.context";
 import {
   PenSquare,
   Calendar,
@@ -44,6 +45,7 @@ const PLATFORM_COLORS: Record<string, string> = {
 export default function Menu() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { openCreateModal } = useModal();
   const router = useRouter();
   const [integrations, setIntegrations] = useState<any[]>([]);
 
@@ -88,11 +90,12 @@ export default function Menu() {
 
       {/* ── Create Post Button ── */}
       <div style={{ padding: "0 12px 12px" }}>
-        <Link
-          href="/create"
+        <button
+          onClick={openCreateModal}
           style={{
+            width: "100%",
             display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-            padding: "9px 16px", borderRadius: 10,
+            padding: "9px 16px", borderRadius: 10, border: "none", cursor: "pointer",
             background: "var(--secondary)", color: "var(--btn-primary-text)",
             fontFamily: "var(--font-inter)", fontSize: 13, fontWeight: 700,
             textDecoration: "none",
@@ -110,7 +113,7 @@ export default function Menu() {
         >
           <Plus size={15} strokeWidth={2.5} />
           <span>Create Post</span>
-        </Link>
+        </button>
       </div>
 
       {/* ── Nav Items ── */}
@@ -127,7 +130,7 @@ export default function Menu() {
                 fontFamily: "var(--font-inter)", fontSize: 13, fontWeight: 600,
                 textDecoration: "none", position: "relative",
                 background: isActive ? "var(--secondary-dim)" : "transparent",
-                color: isActive ? "var(--secondary)" : "rgba(13,9,11,0.55)",
+                color: isActive ? "var(--secondary)" : "var(--text-secondary)",
                 transition: "all 0.15s ease",
               }}
               onMouseEnter={e => {
@@ -151,7 +154,7 @@ export default function Menu() {
                   borderRadius: "0 3px 3px 0",
                 }} />
               )}
-              <Icon size={16} style={{ color: isActive ? "var(--secondary)" : "rgba(13,9,11,0.35)", flexShrink: 0 }} />
+              <Icon size={16} style={{ color: isActive ? "var(--secondary)" : "var(--text-muted)", flexShrink: 0 }} />
               <span>{label}</span>
             </Link>
           );
@@ -174,22 +177,117 @@ export default function Menu() {
           Connected channels
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {integrations.length > 0 ? (
             integrations.map((int) => (
               <div
                 key={int.id}
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",
-                  padding: "7px 12px", borderRadius: 8,
+                  padding: "0px 12px", borderRadius: 8,
                   cursor: "default", transition: "background 0.12s",
                 }}
                 onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--tertiary)"}
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
-                  {getPlatformIcon(int.platform || int.type)}
-                  <span style={{ fontSize: 12, fontWeight: 600, color: "var(--primary)", fontFamily: "var(--font-inter)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                  {/* Channel Avatar + Badge container */}
+                  <div style={{
+                    position: "relative",
+                    width: 36,
+                    height: 36,
+                    borderRadius: 8,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: "bold",
+                    fontSize: 12,
+                    flexShrink: 0,
+                    backgroundColor: (PLATFORM_COLORS[int.platform] || "#6b7280") + "20",
+                    border: "1.5px solid var(--border)",
+                    color: PLATFORM_COLORS[int.platform] || "var(--primary)"
+                  }}>
+                    {int.picture ? (
+                      <img src={int.picture} alt={int.name} style={{ width: "100%", height: "100%", borderRadius: 8, objectFit: "cover" }} />
+                    ) : (
+                      <span>{int.name ? int.name[0].toUpperCase() : "?"}</span>
+                    )}
+                    
+                    {/* Tiny social media platform badge */}
+                    {(() => {
+                      let badgeBg = "#6b7280";
+                      let badgeText = "P";
+                      const p = int.platform?.toLowerCase();
+                      if (p === "facebook") { badgeBg = "#1877f2"; badgeText = "F"; }
+                      else if (p === "linkedin") { badgeBg = "#0077b5"; badgeText = "in"; }
+                      else if (p === "instagram") { badgeBg = "#e1306c"; badgeText = "IG"; }
+                      else if (p === "twitter" || p === "x") { badgeBg = "#1da1f2"; badgeText = "X"; }
+                      else if (p === "youtube") { badgeBg = "#ff0000"; badgeText = "YT"; }
+                      else if (p === "tiktok") { badgeBg = "#010101"; badgeText = "TT"; }
+
+                      return (
+                        <div style={{
+                          position: "absolute",
+                          bottom: 0,
+                          right: -4,
+                          width: 18,
+                          height: 18,
+                          borderRadius: 4,
+                          border: "1.5px solid var(--natural)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#fff",
+                          backgroundColor: badgeBg,
+                          zIndex: 10
+                        }}>
+                          {(() => {
+                            if (p === "facebook") {
+                              return (
+                                <svg className="w-3.5 h-3.5 fill-current text-white" viewBox="0 0 24 24">
+                                  <path d="M9 8H7v3h2v9h3v-9h3l.5-3H12V6c0-.9.2-1.2 1-1.2h2V2h-3c-3 0-5 1.5-5 4.5V8z" />
+                                </svg>
+                              );
+                            } else if (p === "linkedin") {
+                              return (
+                                <svg className="w-2.5 h-2.5 fill-current text-white" viewBox="0 0 24 24">
+                                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                                </svg>
+                              );
+                            } else if (p === "instagram") {
+                              return (
+                                <svg className="w-3.5 h-3.5 stroke-current text-white fill-none" strokeWidth="3" viewBox="0 0 24 24">
+                                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                                </svg>
+                              );
+                            } else if (p === "twitter" || p === "x") {
+                              return (
+                                <svg className="w-3 h-3 fill-current text-white" viewBox="0 0 24 24">
+                                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                                </svg>
+                              );
+                            } else if (p === "youtube") {
+                              return (
+                                <svg className="w-3.5 h-3.5 fill-current text-white" viewBox="0 0 24 24">
+                                  <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.518 3.545 12 3.545 12 3.545s-7.518 0-9.388.507a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.87.507 9.388.507 9.388.507s7.518 0 9.388-.507a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                </svg>
+                              );
+                            } else if (p === "tiktok") {
+                              return (
+                                <svg className="w-3.5 h-3.5 fill-current text-white" viewBox="0 0 24 24">
+                                  <path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.52-4.06-1.37-.28-.2-.53-.43-.77-.68v6.52c.07 1.8-.4 3.67-1.48 5.14-1.4 1.95-3.8 3.14-6.22 3.14-2.1 0-4.2-.82-5.69-2.29-1.97-1.9-2.77-4.85-2-7.48.58-2.03 2.05-3.87 4.07-4.73.96-.41 2.02-.6 3.07-.58v4.06c-1-.07-2.05.28-2.75 1.02-.75.76-.94 1.95-.57 2.92.35.96 1.34 1.66 2.37 1.6 1.25.03 2.36-.88 2.53-2.12.02-.37.01-.74.01-1.12V.02z"/>
+                                </svg>
+                              );
+                            }
+                            return <span style={{ fontSize: 7, fontWeight: 900 }}>{badgeText}</span>;
+                          })()}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--primary)", fontFamily: "var(--font-inter)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {int.name}
                   </span>
                 </div>
@@ -208,7 +306,7 @@ export default function Menu() {
                 key={label}
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",
-                  padding: "7px 12px", borderRadius: 8, opacity: 0.45,
+                  padding: "0px 12px", borderRadius: 8, opacity: 0.45,
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 9, color: "var(--text-muted)" }}>
@@ -229,20 +327,21 @@ export default function Menu() {
           style={{
             display: "flex", alignItems: "center", gap: 7,
             margin: "8px 4px 0",
-            padding: "7px 12px", borderRadius: 9,
+            padding: "0px 12px", borderRadius: 9,
+            height: "36px",
             fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 700,
             color: "var(--secondary)", textDecoration: "none",
-            border: "1px dashed var(--shadow-rose)",
+            border: "1px dashed var(--secondary)",
             background: "var(--tertiary)",
             transition: "all 0.15s",
           }}
           onMouseEnter={e => {
             (e.currentTarget as HTMLElement).style.background = "var(--secondary-dim)";
-            (e.currentTarget as HTMLElement).style.borderColor = "var(--border-hover)";
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--secondary)";
           }}
           onMouseLeave={e => {
             (e.currentTarget as HTMLElement).style.background = "var(--tertiary)";
-            (e.currentTarget as HTMLElement).style.borderColor = "var(--shadow-rose)";
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--secondary)";
           }}
         >
           <Plus size={13} strokeWidth={2.5} />
@@ -330,7 +429,7 @@ export default function Menu() {
             (e.currentTarget as HTMLElement).style.borderColor = "rgba(199,31,31,0.2)";
           }}
           onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.color = "rgba(13,9,11,0.45)";
+            (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
             (e.currentTarget as HTMLElement).style.background = "transparent";
             (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
           }}

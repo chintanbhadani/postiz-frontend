@@ -14,6 +14,8 @@ import { useTheme, useMediaQuery } from "@mui/material";
 import { useAuth } from "../../context/auth.context";
 import Menu from "../Components/SideNavigationMenu/Menu";
 
+import { CreatePostModal } from "../Components/CreatePostModal";
+
 const drawerWidth = 240;
 
 export default function DashboardLayout({
@@ -154,6 +156,7 @@ export default function DashboardLayout({
         <Toolbar />
         <Box sx={{ p: 4 }}>
           {children}
+          <CreatePostModal />
         </Box>
       </Box>
     </Box>

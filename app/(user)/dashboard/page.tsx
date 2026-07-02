@@ -141,7 +141,7 @@ export default function CalendarPage() {
     <div className="p-8 max-w-6xl mx-auto">
 
       {/* Toast Saved Alert */}
-      {showToast && (
+      {/* {showToast && (
         <div className="mb-6 flex justify-center">
           <div className="flex items-center gap-2 bg-[var(--secondary-dim)] border border-[var(--border-hover)] text-[var(--primary)] px-4 py-2 rounded-full backdrop-blur-[12px] text-xs font-semibold">
             <Check size={14} className="text-[var(--secondary)]" />
@@ -154,7 +154,7 @@ export default function CalendarPage() {
             </button>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Header Profile & Actions Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">

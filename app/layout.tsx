@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     shortcut: "/asset/logo.png",
     apple: "/asset/logo.png",
   },
+  other: {
+    'tiktok-developers-site-verification': 'cxFdexKoDhUP0NE18CF3LVQXMMtVp7NW',
+  },
 };
 
 import Script from "next/script";

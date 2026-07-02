@@ -4,6 +4,7 @@ import store, { persistor } from '@/store/store';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { ModalProvider } from '../context/modal.context';
 // import { WebSocketProvider } from "./components/Socket/webSocketContext";
 // import type {} from '@mui/x-date-pickers/themeAugmentation';
 // import { WebSocketProvider } from '@/@core/hooks/WebSocketProvider';
@@ -17,7 +18,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         {/* <WebSocketProvider>
           <SessionApprovalDialog /> */}
         {/* <ThemeProvider theme={outerTheme}>{children}</ThemeProvider> */}
-        {children}
+        <ModalProvider>
+          {children}
+        </ModalProvider>
         {/* </WebSocketProvider> */}
       </PersistGate>
       {/* // </SessionProvider> */}

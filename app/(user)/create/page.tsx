@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { LinkedInPreview } from "../../Components/LinkedInPreview";
+import { GenericPreview } from "../../Components/GenericPreview";
+import { InstagramPreview } from "../../Components/InstagramPreview";
 import { LinkedInSettings } from "../../Components/LinkedInSettings";
 
 const createPostSchema = Yup.object().shape({
   content: Yup.string().required("Content is required"),
   integrationId: Yup.string().required("Please select a channel"),
-  publishDate: Yup.string().required("Date is required"),
-  publishTime: Yup.string().required("Time is required"),
   state: Yup.string().oneOf(["QUEUE", "DRAFT"]).required()
 });
 
@@ -21,6 +21,7 @@ export default function CreatePostPage() {
   const [charCount, setCharCount] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [scheduleMode, setScheduleMode] = useState<"NOW" | "LATER">("LATER");
   const [initialValues, setInitialValues] = useState({
     content: "",
     integrationId: "",
@@ -55,7 +56,18 @@ export default function CreatePostPage() {
     setError("");
     setSuccess("");
     try {
-      const publishDate = new Date(`${values.publishDate}T${values.publishTime}`).toISOString();
+      let publishDate;
+      if (scheduleMode === "NOW") {
+        publishDate = new Date().toISOString();
+      } else {
+        if (!values.publishDate || !values.publishTime) {
+          setError("Date and Time are required for scheduling.");
+          setSubmitting(false);
+          return;
+        }
+        publishDate = new Date(`${values.publishDate}T${values.publishTime}`).toISOString();
+      }
+      
       await postsApi.create({
         content: values.content,
         integrationId: values.integrationId,
@@ -63,7 +75,7 @@ export default function CreatePostPage() {
         images: values.images,
         state: values.state,
       });
-      setSuccess(values.state === "DRAFT" ? "Saved as draft!" : "Post scheduled successfully!");
+      setSuccess(values.state === "DRAFT" ? "Saved as draft!" : (scheduleMode === "NOW" ? "Published successfully!" : "Post scheduled successfully!"));
       setTimeout(() => router.push("/dashboard"), 1200);
     } catch (err: any) {
       setError(err?.response?.data?.message || "Failed to schedule post");
@@ -103,6 +115,7 @@ export default function CreatePostPage() {
           {({ values, errors, touched, handleChange, handleBlur, setFieldValue, isSubmitting }) => {
             const selectedIntegration = integrations.find((i) => i.id === values.integrationId);
             const isLinkedIn = selectedIntegration?.platform?.toLowerCase() === 'linkedin';
+            const isInstagram = selectedIntegration?.platform?.toLowerCase() === 'instagram';
             return (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Form className="space-y-6">
@@ -224,43 +237,65 @@ export default function CreatePostPage() {
                   )}
                 </div>
 
-                {/* Date/Time Pickers */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Date</label>
-                    <input
-                      type="date"
-                      name="publishDate"
-                      value={values.publishDate}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      min={new Date().toISOString().split("T")[0]}
-                      required
-                      className={`w-full bg-[var(--natural)] border rounded-xl px-4 py-3 text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] focus:border-[var(--border-hover)] transition backdrop-blur-[12px] [color-scheme:dark] ${
-                        touched.publishDate && errors.publishDate ? "border-[rgba(248,113,113,0.3)]" : "border-[var(--border)]"
+                {/* Publish Options */}
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Publish Options</label>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <button
+                      type="button"
+                      onClick={() => setScheduleMode("NOW")}
+                      className={`py-3 px-4 rounded-xl border font-medium transition flex items-center justify-center gap-2 ${
+                        scheduleMode === "NOW"
+                          ? "border-[var(--secondary)] bg-[var(--secondary-dim)] text-[var(--secondary)]"
+                          : "border-[var(--border)] bg-[var(--natural)] text-[var(--text-secondary)] hover:border-[var(--border-hover)]"
                       }`}
-                    />
-                    {touched.publishDate && errors.publishDate && (
-                      <span className="text-[#f87171] text-xs mt-1 block">{errors.publishDate}</span>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Time</label>
-                    <input
-                      type="time"
-                      name="publishTime"
-                      value={values.publishTime}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      required
-                      className={`w-full bg-[var(--natural)] border rounded-xl px-4 py-3 text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] focus:border-[var(--border-hover)] transition backdrop-blur-[12px] [color-scheme:dark] ${
-                        touched.publishTime && errors.publishTime ? "border-[rgba(248,113,113,0.3)]" : "border-[var(--border)]"
+                    >
+                      🚀 Publish Now
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setScheduleMode("LATER")}
+                      className={`py-3 px-4 rounded-xl border font-medium transition flex items-center justify-center gap-2 ${
+                        scheduleMode === "LATER"
+                          ? "border-[var(--secondary)] bg-[var(--secondary-dim)] text-[var(--secondary)]"
+                          : "border-[var(--border)] bg-[var(--natural)] text-[var(--text-secondary)] hover:border-[var(--border-hover)]"
                       }`}
-                    />
-                    {touched.publishTime && errors.publishTime && (
-                      <span className="text-[#f87171] text-xs mt-1 block">{errors.publishTime}</span>
-                    )}
+                    >
+                      🗓️ Set Date & Time
+                    </button>
                   </div>
+
+                  {scheduleMode === "LATER" && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Date</label>
+                        <input
+                          type="date"
+                          name="publishDate"
+                          value={values.publishDate}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          min={new Date().toISOString().split("T")[0]}
+                          className={`w-full bg-[var(--natural)] border rounded-xl px-4 py-3 text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] focus:border-[var(--border-hover)] transition backdrop-blur-[12px] [color-scheme:dark] ${
+                            touched.publishDate && errors.publishDate ? "border-[rgba(248,113,113,0.3)]" : "border-[var(--border)]"
+                          }`}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Time</label>
+                        <input
+                          type="time"
+                          name="publishTime"
+                          value={values.publishTime}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          className={`w-full bg-[var(--natural)] border rounded-xl px-4 py-3 text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] focus:border-[var(--border-hover)] transition backdrop-blur-[12px] [color-scheme:dark] ${
+                            touched.publishTime && errors.publishTime ? "border-[rgba(248,113,113,0.3)]" : "border-[var(--border)]"
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Publish Preview */}
@@ -293,7 +328,7 @@ export default function CreatePostPage() {
                     disabled={isSubmitting}
                     className="flex-1 btn-primary px-4 py-3"
                   >
-                    {isSubmitting && values.state === "QUEUE" ? "Scheduling..." : "Schedule Post"}
+                    {isSubmitting && values.state === "QUEUE" ? "Processing..." : (scheduleMode === "NOW" ? "Publish Now" : "Schedule Post")}
                   </button>
                 </div>
               </Form>
@@ -308,10 +343,18 @@ export default function CreatePostPage() {
                         images={values.images}
                         integration={selectedIntegration}
                       />
+                    ) : isInstagram ? (
+                      <InstagramPreview
+                        content={values.content}
+                        images={values.images}
+                        integration={selectedIntegration}
+                      />
                     ) : (
-                      <div className="bg-[var(--natural)] border border-[var(--border)] rounded-xl p-8 text-center text-[var(--text-muted)] backdrop-blur-[12px]">
-                        Preview is currently available only for LinkedIn.
-                      </div>
+                      <GenericPreview
+                        content={values.content}
+                        images={values.images}
+                        integration={selectedIntegration}
+                      />
                     )}
                   </div>
                 </div>

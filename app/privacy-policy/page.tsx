@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Privacy Policy - Postilio',
   other: {
-    'tiktok-developers-site-verification': 'yEYIOGd0wknrNXBqwAQRiXSGA5igJxNt',
+    'tiktok-developers-site-verification': 'cxFdexKoDhUP0NE18CF3LVQXMMtVp7NW',
   },
 };
 
