@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   turbopack: {},
   trailingSlash: true,
   // Allow development mode on the VPS IP
-  allowedDevOrigins: ['187.127.171.3', 'localhost', 'daf7-2409-40c1-1002-3e56-749b-22e8-7e25-3ea9.ngrok-free.app'],
+  allowedDevOrigins: ['187.127.171.3', 'localhost', 'a060-2405-f600-37-221d-61d1-8a08-4d2d-fabb.ngrok-free.app'],
 };
 
 export default nextConfig;

@@ -72,4 +72,9 @@ export const integrationsApi = {
     api.post("/integrations/linkedin/select-page", data),
 };
 
+export const billingApi = {
+  checkout: (successUrl: string, cancelUrl: string) =>
+    api.post("/billing/checkout", { successUrl, cancelUrl }),
+};
+
 export default api;
