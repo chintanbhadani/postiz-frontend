@@ -75,6 +75,10 @@ export const integrationsApi = {
 export const billingApi = {
   checkout: (successUrl: string, cancelUrl: string) =>
     api.post("/billing/checkout", { successUrl, cancelUrl }),
+  portal: (returnUrl: string) =>
+    api.post("/billing/portal", { returnUrl }),
+  invoices: () =>
+    api.get("/billing/invoices"),
 };
 
 export default api;

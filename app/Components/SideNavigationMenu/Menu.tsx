@@ -44,10 +44,12 @@ const PLATFORM_COLORS: Record<string, string> = {
 
 export default function Menu() {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user, org, logout } = useAuth();
   const { openCreateModal } = useModal();
   const router = useRouter();
   const [integrations, setIntegrations] = useState<any[]>([]);
+
+  const isPro = org?.subscriptionStatus === "active";
 
   useEffect(() => {
     if (user) {
@@ -74,6 +76,7 @@ export default function Menu() {
   const navItems = [
     { href: "/create", label: "Create", icon: PenSquare },
     { href: "/", label: "Publish", icon: Calendar },
+    { href: "/billing", label: "Plans & Billing", icon: Settings },
     { href: "#", label: "Analytics", icon: BarChart3 },
     { href: "#", label: "Community", icon: Users },
   ];
@@ -350,30 +353,33 @@ export default function Menu() {
       </div>
 
       {/* ── Upgrade Card ── */}
-      <div style={{ margin: "12px 12px 0", padding: "14px", borderRadius: 12, background: "var(--main-background)", border: "1px solid var(--border)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--secondary-dim)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <Zap size={13} style={{ color: "var(--secondary)" }} />
+      {!isPro && (
+        <div style={{ margin: "12px 12px 0", padding: "14px", borderRadius: 12, background: "var(--main-background)", border: "1px solid var(--border)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--secondary-dim)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Zap size={13} style={{ color: "var(--secondary)" }} />
+            </div>
+            <div>
+              <p style={{ fontSize: 12, fontWeight: 800, color: "var(--primary)", fontFamily: "var(--font-inter)", margin: 0 }}>Go Pro</p>
+              <p style={{ fontSize: 10, color: "var(--text-secondary)", fontFamily: "var(--font-inter)", margin: 0 }}>Unlimited posts & AI tools</p>
+            </div>
           </div>
-          <div>
-            <p style={{ fontSize: 12, fontWeight: 800, color: "var(--primary)", fontFamily: "var(--font-inter)", margin: 0 }}>Go Pro</p>
-            <p style={{ fontSize: 10, color: "var(--text-secondary)", fontFamily: "var(--font-inter)", margin: 0 }}>Unlimited posts & AI tools</p>
-          </div>
+          <button
+            onClick={() => router.push("/billing/")}
+            style={{
+              width: "100%", padding: "8px 12px", borderRadius: 9,
+              background: "var(--secondary)", color: "var(--btn-primary-text)", border: "none",
+              fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 700,
+              cursor: "pointer", boxShadow: "0 2px 8px var(--shadow-rose)",
+              transition: "all 0.15s",
+            }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--secondary-light)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "var(--secondary)"}
+          >
+            Upgrade Now →
+          </button>
         </div>
-        <button
-          style={{
-            width: "100%", padding: "8px 12px", borderRadius: 9,
-            background: "var(--secondary)", color: "var(--btn-primary-text)", border: "none",
-            fontFamily: "var(--font-inter)", fontSize: 12, fontWeight: 700,
-            cursor: "pointer", boxShadow: "0 2px 8px var(--shadow-rose)",
-            transition: "all 0.15s",
-          }}
-          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--secondary-light)"}
-          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "var(--secondary)"}
-        >
-          Upgrade Now →
-        </button>
-      </div>
+      )}
 
       {/* ── Footer / User ── */}
       <div style={{ padding: "12px 12px 16px", borderTop: "1px solid var(--border)", marginTop: 12 }}>
@@ -395,11 +401,12 @@ export default function Menu() {
               </span>
               <span style={{
                 padding: "1px 6px", borderRadius: 4,
-                background: "var(--border)", color: "var(--text-secondary)",
+                background: isPro ? "rgba(16, 185, 129, 0.15)" : "var(--border)",
+                color: isPro ? "#10b981" : "var(--text-secondary)",
                 fontSize: 9, fontWeight: 800, fontFamily: "var(--font-inter)",
                 textTransform: "uppercase", letterSpacing: "0.06em",
               }}>
-                Free
+                {isPro ? "Pro" : "Free"}
               </span>
             </div>
           </div>
