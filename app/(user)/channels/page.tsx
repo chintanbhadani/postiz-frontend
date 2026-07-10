@@ -162,7 +162,7 @@ export default function ChannelsPage() {
         <p className="text-[var(--text-muted)] mt-1">Connect your social media accounts to start scheduling</p>
       </div>
 
-      {subStatus !== "active" ? (
+      {false && subStatus !== "active" ? (
         <div className="mb-8 p-6 bg-[var(--secondary-dim)] border border-[var(--secondary)]/30 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h3 className="text-lg font-bold text-[var(--primary)]">Subscription Required</h3>
@@ -177,17 +177,7 @@ export default function ChannelsPage() {
             Activate Subscription
           </button>
         </div>
-      ) : (
-        <div className="mb-8 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 font-medium text-sm flex justify-between items-center">
-          <span>✓ Your subscription is Active ($4.99/month per connected channel).</span>
-          <button
-            onClick={handleSubscribe}
-            className="text-xs text-[var(--secondary)] underline font-bold cursor-pointer hover:text-[var(--secondary)]/80"
-          >
-            Manage Billing
-          </button>
-        </div>
-      )}
+      ) : null}
 
       {error && (
         <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-[#f87171] font-medium text-sm">
@@ -234,10 +224,6 @@ export default function ChannelsPage() {
               key={platform.id}
               onClick={() => {
                 if (!connected) {
-                  if (subStatus !== "active") {
-                    setError("Please activate your subscription before connecting channels.");
-                    return;
-                  }
                   setSelected(platform);
                   setError("");
                 }
