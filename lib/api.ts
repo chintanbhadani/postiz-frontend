@@ -27,6 +27,7 @@ export const uploadsApi = {
       },
     });
   },
+  listMedia: () => api.get("/uploads/media"),
 };
 
 export const integrationsApi = {

@@ -9,6 +9,7 @@ import { GenericPreview } from "./GenericPreview";
 import { InstagramPreview } from "./InstagramPreview";
 import { LinkedInSettings } from "./LinkedInSettings";
 import { useModal } from "../../context/modal.context";
+import { MediaLibraryModal } from "./MediaLibraryModal";
 
 const createPostSchema = Yup.object().shape({
   content: Yup.string().required("Content is required"),
@@ -46,6 +47,7 @@ export const CreatePostModal = () => {
   });
 
   const [uploading, setUploading] = useState(false);
+  const [isMediaLibraryOpen, setIsMediaLibraryOpen] = useState(false);
 
   useEffect(() => {
     const next = new Date();
@@ -466,6 +468,20 @@ export const CreatePostModal = () => {
                                 </span>
                               </div>
                             </label>
+
+                            {/* Open Media Library Button */}
+                            <button
+                              type="button"
+                              onClick={() => setIsMediaLibraryOpen(true)}
+                              className="w-30 h-30 flex-shrink-0 border border-[var(--border)] hover:border-[var(--secondary)] rounded-lg flex flex-col items-center justify-center p-1.5 text-center transition-colors bg-[var(--main-background)]/30 gap-1 group"
+                            >
+                              <svg className="w-5 h-5 text-[var(--text-muted)] group-hover:text-[var(--secondary)] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                              </svg>
+                              <span className="text-[8px] leading-tight font-medium text-[var(--text-secondary)] group-hover:text-[var(--secondary)]">
+                                Browse Library
+                              </span>
+                            </button>
 
                             {uploading && (
                               <div className="w-20 h-20 border border-[var(--border)] rounded-lg flex items-center justify-center bg-[var(--main-background)]/30">
@@ -893,6 +909,15 @@ export const CreatePostModal = () => {
                         </button>
                       </div>
                     </div>
+
+                    {/* Media Library Modal Overlay */}
+                    <MediaLibraryModal 
+                      isOpen={isMediaLibraryOpen}
+                      onClose={() => setIsMediaLibraryOpen(false)}
+                      onSelect={(urls: string[]) => {
+                        setFieldValue("images", [...values.images, ...urls]);
+                      }}
+                    />
 
                   </Form>
                 );
