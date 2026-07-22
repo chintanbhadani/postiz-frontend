@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     apple: "/asset/logo.png",
   },
   other: {
-    'tiktok-developers-site-verification': 'cxFdexKoDhUP0NE18CF3LVQXMMtVp7NW',
+    'tiktok-developers-site-verification': process.env.NEXT_PUBLIC_TIKTOK_SITE_VERIFICATION || '',
   },
 };
 
