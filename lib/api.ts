@@ -80,6 +80,14 @@ export const billingApi = {
     api.post("/billing/portal", { returnUrl }),
   invoices: () =>
     api.get("/billing/invoices"),
+  createRazorpaySubscription: (plan: string, channels: number, cycle: string) =>
+    api.post("/billing/razorpay/create-subscription", { plan, channels, cycle }),
+  updateRazorpaySubscription: (plan: string, channels: number, cycle: string) =>
+    api.post("/billing/razorpay/update-subscription", { plan, channels, cycle }),
+  cancelAndRefundRazorpaySubscription: () =>
+    api.post("/billing/razorpay/cancel-and-refund"),
+  verifyRazorpayPayment: (razorpay_subscription_id: string, razorpay_payment_id: string, razorpay_signature: string, plan?: string, cycle?: string, channels?: number) =>
+    api.post("/billing/razorpay/verify-payment", { razorpay_subscription_id, razorpay_payment_id, razorpay_signature, plan, cycle, channels }),
 };
 
 export default api;

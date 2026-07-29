@@ -5,12 +5,22 @@ import { billingApi, integrationsApi, authApi } from "../../../lib/api";
 export default function BillingPage() {
   const [integrationsCount, setIntegrationsCount] = useState(0);
   const [subStatus, setSubStatus] = useState<string | null>(null);
+  const [currentPlan, setCurrentPlan] = useState<string | null>(null); // 'essentials', 'team', or null
+  const [currentSubscription, setCurrentSubscription] = useState<any>(null); // full subscription object
   const [invoices, setInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   
   const [selectedChannels, setSelectedChannels] = useState(1);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("yearly");
+
+  // UPI Cancel & Re-subscribe flow states
+  const [showUpiModal, setShowUpiModal] = useState(false);
+  const [pendingPlanType, setPendingPlanType] = useState("");
+  const [upiProcessing, setUpiProcessing] = useState(false);
+
+  console.log(" currentPlan :: ", currentPlan);
+  
 
   useEffect(() => {
     async function init() {
@@ -20,9 +30,18 @@ export default function BillingPage() {
         setSelectedChannels(Math.max(1, integrationsRes.data.length));
 
         const meRes = await authApi.me();
+        console.log(" cmeRes :: ", meRes);
+        
         const org = meRes.data.organizations?.[0]?.organization;
         if (org) {
           setSubStatus(org.subscriptionStatus);
+          const sub = org.subscriptions;
+          if (sub) {
+            setCurrentSubscription(sub);
+            if (sub.plan && sub.plan !== 'unknown') {
+              setCurrentPlan(sub.plan);
+            }
+          }
         }
 
         const invoicesRes = await billingApi.invoices();
@@ -36,25 +55,139 @@ export default function BillingPage() {
     init();
   }, []);
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if ((window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handleSubscribe = async (planType: string) => {
+    if (selectedChannels < integrationsCount) {
+      setError(`You have ${integrationsCount} channels connected. Please disconnect ${integrationsCount - selectedChannels} channel(s) before downgrading.`);
+      return;
+    }
+    
     try {
-      const res = await billingApi.checkout(
-        window.location.origin + "/billing?success=true",
-        window.location.origin + "/billing?cancel=true"
-      );
-      window.location.href = res.data.url;
+      const res = await billingApi.createRazorpaySubscription(planType, selectedChannels, billingCycle);
+      const { subscription_id } = res.data;
+
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        setError("Failed to load Razorpay. Please check your connection.");
+        return;
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        name: "Postilio",
+        description: `Subscription for ${planType} plan`,
+        subscription_id: subscription_id,
+        handler: async function (response: any) {
+          try {
+            await billingApi.verifyRazorpayPayment(
+              response.razorpay_subscription_id,
+              response.razorpay_payment_id,
+              response.razorpay_signature,
+              planType,     // plan name (essentials/team)
+              billingCycle, // monthly/yearly
+              selectedChannels // number of channels
+            );
+            window.location.reload();
+          } catch (verifyErr) {
+            setError("Payment verification failed.");
+          }
+        },
+        theme: {
+          color: "#10b981",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on("payment.failed", function (response: any) {
+        setError(`Payment failed: ${response.error.description}`);
+      });
+      rzp.open();
     } catch (err) {
       setError("Failed to start checkout. Please try again.");
     }
   };
 
-  const handleManageBilling = async () => {
-    try {
-      const res = await billingApi.portal(window.location.origin + "/billing");
-      window.location.href = res.data.url;
-    } catch (err) {
-      setError("Failed to open billing portal. Make sure you have an active subscription.");
+  const handleUpdateSubscription = async (planType: string) => {
+    if (selectedChannels < integrationsCount) {
+      setError(`You have ${integrationsCount} channels connected. Please disconnect ${integrationsCount - selectedChannels} channel(s) before downgrading.`);
+      return;
     }
+    
+    try {
+      setLoading(true);
+      const res = await billingApi.updateRazorpaySubscription(planType, selectedChannels, billingCycle);
+      if (res.data.success) {
+        window.location.reload();
+      }
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message || err.response?.data?.error || err.message;
+      if (errorMsg === 'UPI_NOT_SUPPORTED' || (typeof errorMsg === 'string' && errorMsg.toLowerCase().includes("payment mode is upi"))) {
+        setPendingPlanType(planType);
+        setShowUpiModal(true);
+      } else {
+        setError(`Update failed: ${errorMsg}`);
+      }
+      setLoading(false);
+    }
+  };
+
+  const handleCancelAndResubscribe = async () => {
+    try {
+      setUpiProcessing(true);
+      // 1. Cancel and Refund
+      const res = await billingApi.cancelAndRefundRazorpaySubscription();
+      setShowUpiModal(false);
+      
+      if (res.data.refundedAmountINR > 0) {
+        alert(`Successfully cancelled! ₹${res.data.refundedAmountINR} has been refunded to your bank account and will reflect in 5-7 business days.`);
+      } else {
+        alert("Previous subscription cancelled successfully.");
+      }
+      
+      // 2. Trigger new checkout flow
+      handleSubscribe(pendingPlanType);
+    } catch (err: any) {
+      setError(`Failed to cancel UPI subscription: ${err.response?.data?.message || err.message}`);
+    } finally {
+      setUpiProcessing(false);
+    }
+  };
+
+  const handlePlanClick = (planType: string) => {
+    // If attempting to subscribe to a paid plan with fewer selected channels than connected
+    if (selectedChannels < integrationsCount) {
+      setError(`You have ${integrationsCount} channels connected. Please disconnect ${integrationsCount - selectedChannels} channel(s) before downgrading.`);
+      return;
+    }
+    
+    // If somehow trying to downgrade to free while having more than 1 channel
+    if (planType === 'free' && integrationsCount > 1) {
+      setError(`You have ${integrationsCount} channels connected. Please disconnect channels until you only have 1 left before downgrading to the Free plan.`);
+      return;
+    }
+
+    if (isFreePlan) {
+      handleSubscribe(planType);
+    } else {
+      handleUpdateSubscription(planType);
+    }
+  };
+
+  const handleManageBilling = async () => {
+    setError("You are currently on a Razorpay subscription. You can change your plan or channel count directly on this page.");
   };
 
   if (loading) {
@@ -66,6 +199,8 @@ export default function BillingPage() {
   }
 
   const isFreePlan = subStatus !== "active";
+  const isEssentialsPlan = !isFreePlan && currentPlan === 'essentials';
+  const isTeamPlan = !isFreePlan && currentPlan === 'team';
   
   // Pricing configuration
   const essentialsPriceUnit = billingCycle === "yearly" ? 499 : 599;
@@ -76,6 +211,41 @@ export default function BillingPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6 text-sm">
+      {/* UPI Cancel & Resubscribe Modal */}
+      {showUpiModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-[var(--natural)] border border-[var(--border)] rounded-xl p-6 shadow-2xl max-w-md w-full">
+            <h3 className="text-lg font-bold text-[var(--primary)] mb-2">UPI Plan Update Required</h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-4">
+              Your current payment method (UPI) does not support automatic upgrades or downgrades. 
+            </p>
+            <p className="text-sm text-[var(--text-secondary)] mb-6">
+              To update your plan, we will <strong className="text-[var(--primary)]">cancel your current subscription</strong> and refund any unused amount to your bank account. You will then be prompted to purchase the new plan.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button 
+                onClick={() => setShowUpiModal(false)}
+                disabled={upiProcessing}
+                className="px-4 py-2 rounded-lg font-bold text-xs bg-gray-500/10 text-[var(--text-secondary)] hover:text-[var(--primary)] disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleCancelAndResubscribe}
+                disabled={upiProcessing}
+                className="px-4 py-2 rounded-lg font-bold text-xs bg-[#10b981] text-white hover:bg-[#0f9f6e] flex items-center gap-2 disabled:opacity-50"
+              >
+                {upiProcessing ? (
+                  <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Processing...</>
+                ) : (
+                  "Confirm & Proceed"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mini Title bar */}
       <div className="flex justify-between items-center mb-6">
         <div>
@@ -98,15 +268,47 @@ export default function BillingPage() {
         </div>
       )}
 
+      {/* Current Subscription Banner — shown only when on a paid plan */}
+      {currentSubscription && !isFreePlan && (
+        <div className="mb-4 bg-gradient-to-r from-[var(--secondary)]/10 to-emerald-500/5 border border-[var(--secondary)]/20 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-sm">
+          <div>
+            <h3 className="text-[var(--primary)] font-bold text-sm flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Active Subscription
+            </h3>
+            <p className="text-[var(--text-secondary)] text-xs mt-1">
+              You are currently subscribed to the <span className="font-bold text-[var(--secondary)] capitalize">{currentSubscription.plan}</span> plan.
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-4 text-xs bg-[var(--natural)] px-4 py-2 rounded-lg border border-[var(--border)] shadow-xs">
+            <div className="flex flex-col">
+              <span className="text-[var(--text-muted)] text-[10px] uppercase font-bold tracking-wider">Channels</span>
+              <span className="font-black text-[var(--primary)]">{currentSubscription.quantity} Selected</span>
+            </div>
+            <div className="w-px h-8 bg-[var(--border)] hidden sm:block"></div>
+            <div className="flex flex-col">
+              <span className="text-[var(--text-muted)] text-[10px] uppercase font-bold tracking-wider">Renews On</span>
+              <span className="font-bold text-[var(--primary)]">
+                {new Date(currentSubscription.currentPeriodEnd).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modern Compact Header with Selectors */}
-      <div className="bg-[var(--natural)] border border-[var(--border)] rounded-xl p-4 mb-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="bg-[var(--natural)] border border-[var(--border)] rounded-xl p-4 mb-4 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-sm font-bold text-[var(--primary)]">Flexible Pricing for Everyone</h2>
           <p className="text-[var(--text-muted)] text-xs mt-0.5">
-            You're on the <span className="font-semibold text-[var(--secondary)]">Free plan</span> with up to 1 channel. Customize your setup below.
+            {isFreePlan ? (
+              <>You're on the <span className="font-semibold text-[var(--secondary)]">Free plan</span> with up to 1 channel. Customize your setup below.</>
+            ) : (
+              <>Adjust your channel count or switch plans below.</>
+            )}
           </p>
         </div>
-
         <div className="flex items-center gap-3">
           {/* Compact channel up/down selector */}
           <div className="flex items-center bg-[var(--tertiary)] border border-[var(--border)] rounded-lg p-1">
@@ -202,12 +404,12 @@ export default function BillingPage() {
 
         {/* ESSENTIALS PLAN */}
         <div className={`bg-[var(--natural)] border rounded-xl p-5 shadow-xs flex flex-col justify-between transition-all ${
-          !isFreePlan && integrationsCount <= 5 ? "border-[var(--secondary)] ring-1 ring-[var(--secondary)]/15" : "border-[var(--border)]"
+          isEssentialsPlan ? "border-[var(--secondary)] ring-1 ring-[var(--secondary)]/15" : "border-[var(--border)]"
         }`}>
           <div>
             <div className="flex justify-between items-start mb-2">
               <h3 className="font-bold text-[var(--primary)] text-sm">Essentials</h3>
-              {!isFreePlan && <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full">Active</span>}
+              {isEssentialsPlan && <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full">Active</span>}
             </div>
 
             <div className="mb-4">
@@ -239,18 +441,32 @@ export default function BillingPage() {
           </div>
 
           <button
-            onClick={() => handleSubscribe("essentials")}
-            className="w-full mt-6 py-2 bg-[var(--secondary)] hover:bg-[var(--secondary)]/90 text-white font-bold rounded-lg text-xs transition cursor-pointer"
+            onClick={() => handlePlanClick("essentials")}
+            className={`w-full mt-6 py-2 font-bold rounded-lg text-xs transition cursor-pointer ${
+              isEssentialsPlan && currentSubscription?.quantity === selectedChannels
+                ? "bg-gray-500/10 text-gray-400 cursor-default"
+                : isFreePlan
+                  ? "bg-[var(--secondary)] hover:bg-[var(--secondary)]/90 text-white"
+                  : "bg-gray-500/10 hover:bg-gray-500/20 text-[var(--primary)] border border-gray-500/20"
+            }`}
+            disabled={isEssentialsPlan && currentSubscription?.quantity === selectedChannels}
           >
-            Upgrade to Essentials
+            {isEssentialsPlan && currentSubscription?.quantity === selectedChannels 
+              ? "Current Plan" 
+              : isEssentialsPlan 
+                ? "Update Setup" 
+                : isFreePlan ? "Upgrade to Essentials" : "Downgrade to Essentials"}
           </button>
         </div>
 
         {/* TEAM PLAN */}
-        <div className="bg-[var(--natural)] border border-[var(--border)] rounded-xl p-5 shadow-xs flex flex-col justify-between transition-all">
+        <div className={`bg-[var(--natural)] border rounded-xl p-5 shadow-xs flex flex-col justify-between transition-all ${
+          isTeamPlan ? "border-[var(--secondary)] ring-1 ring-[var(--secondary)]/15" : "border-[var(--border)]"
+        }`}>
           <div>
             <div className="flex justify-between items-start mb-2">
               <h3 className="font-bold text-[var(--primary)] text-sm">Team</h3>
+              {isTeamPlan && <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full">Active</span>}
             </div>
 
             <div className="mb-4">
@@ -282,10 +498,19 @@ export default function BillingPage() {
           </div>
 
           <button
-            onClick={() => handleSubscribe("team")}
-            className="w-full mt-6 py-2 bg-[var(--natural)] hover:bg-[var(--tertiary)] border border-[var(--border)] text-[var(--primary)] font-bold rounded-lg text-xs transition cursor-pointer"
+            onClick={() => handlePlanClick("team")}
+            disabled={isTeamPlan && currentSubscription?.quantity === selectedChannels}
+            className={`w-full mt-6 py-2 font-bold rounded-lg text-xs transition ${
+              isTeamPlan && currentSubscription?.quantity === selectedChannels
+                ? "bg-gray-500/10 text-gray-400 cursor-default"
+                : "bg-[var(--natural)] hover:bg-[var(--tertiary)] border border-[var(--border)] text-[var(--primary)] cursor-pointer"
+            }`}
           >
-            Upgrade to Team
+            {isTeamPlan && currentSubscription?.quantity === selectedChannels 
+              ? "Current Plan" 
+              : isTeamPlan 
+                ? "Update Setup" 
+                : isFreePlan ? "Upgrade to Team" : "Upgrade to Team"}
           </button>
         </div>
 
@@ -315,7 +540,7 @@ export default function BillingPage() {
                 {invoices.map((inv) => (
                   <tr key={inv.id} className="hover:bg-[var(--tertiary)]/50 transition">
                     <td className="py-2.5 pr-4 font-mono text-[10px]">{inv.number || inv.id.substring(0, 10)}</td>
-                    <td className="py-2.5 px-4">{new Date(inv.date).toLocaleDateString()}</td>
+                    <td className="py-2.5 px-4">{new Date(inv.date).toLocaleString()}</td>
                     <td className="py-2.5 px-4 font-semibold text-[var(--primary)]">
                       {inv.currency.toUpperCase() === "INR" ? "₹" : "$"}
                       {inv.amount.toFixed(2)}

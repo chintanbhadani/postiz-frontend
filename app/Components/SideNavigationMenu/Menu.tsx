@@ -130,10 +130,10 @@ export default function Menu() {
               style={{
                 display: "flex", alignItems: "center", gap: 10,
                 padding: "8px 12px", borderRadius: 10,
-                fontFamily: "var(--font-inter)", fontSize: 13, fontWeight: 600,
+                fontFamily: "var(--font-inter)", fontSize: 14, fontWeight: 700,
                 textDecoration: "none", position: "relative",
                 background: isActive ? "var(--secondary-dim)" : "transparent",
-                color: isActive ? "var(--secondary)" : "var(--text-secondary)",
+                color: isActive ? "var(--secondary)" : "var(--primary)",
                 transition: "all 0.15s ease",
               }}
               onMouseEnter={e => {
@@ -145,7 +145,7 @@ export default function Menu() {
               onMouseLeave={e => {
                 if (!isActive) {
                   (e.currentTarget as HTMLElement).style.background = "transparent";
-                  (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                  (e.currentTarget as HTMLElement).style.color = "var(--primary)";
                 }
               }}
             >
@@ -157,7 +157,7 @@ export default function Menu() {
                   borderRadius: "0 3px 3px 0",
                 }} />
               )}
-              <Icon size={16} style={{ color: isActive ? "var(--secondary)" : "var(--text-muted)", flexShrink: 0 }} />
+              <Icon size={18} style={{ color: isActive ? "var(--secondary)" : "var(--primary)", flexShrink: 0 }} />
               <span>{label}</span>
             </Link>
           );
