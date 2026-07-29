@@ -16,6 +16,7 @@ import {
   BarChart3,
   Settings,
   Zap,
+  Shield,
 } from "lucide-react";
 
 const FacebookIcon = ({ size = 15 }: { size?: number }) => (
@@ -80,6 +81,10 @@ export default function Menu() {
     { href: "#", label: "Analytics", icon: BarChart3 },
     { href: "#", label: "Community", icon: Users },
   ];
+
+  if (user?.globalRole === "ADMIN") {
+    navItems.push({ href: "/admin/users", label: "Admin Panel", icon: Shield });
+  }
 
   const handleSignOut = async () => {
     await logout();
