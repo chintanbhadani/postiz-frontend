@@ -30,6 +30,7 @@ const PLATFORM_COLORS: Record<string, string> = {
 const STATE_STYLES: Record<string, string> = {
   QUEUE: "bg-[var(--secondary-dim)] text-[var(--secondary)] border border-[var(--secondary-dim)]",
   POSTED: "bg-[rgba(52,211,153,0.1)] text-[#34d399] border border-[rgba(52,211,153,0.2)]",
+  PUBLISHED: "bg-[rgba(52,211,153,0.1)] text-[#34d399] border border-[rgba(52,211,153,0.2)]",
   ERROR: "bg-[rgba(248,113,113,0.1)] text-[#f87171] border border-[rgba(248,113,113,0.2)]",
   DRAFT: "bg-[var(--tertiary)] text-[var(--text-secondary)] border border-[var(--border)]",
 };
@@ -150,7 +151,7 @@ export default function CalendarPage() {
       case "approvals":
         return [];
       case "sent":
-        return posts.filter((p) => p.state === "POSTED" || p.state === "ERROR");
+        return posts.filter((p) => p.state === "POSTED" || p.state === "PUBLISHED" || p.state === "ERROR" || p.state === "FAILED");
       default:
         return posts;
     }
@@ -162,7 +163,7 @@ export default function CalendarPage() {
   const queueCount = posts.filter(p => p.state === "QUEUE").length;
   const draftsCount = posts.filter(p => p.state === "DRAFT").length;
   const approvalsCount = 0; // Approvals is currently an upsell tab
-  const sentCount = posts.filter(p => p.state === "POSTED" || p.state === "ERROR").length;
+  const sentCount = posts.filter(p => p.state === "POSTED" || p.state === "PUBLISHED" || p.state === "ERROR" || p.state === "FAILED").length;
 
   const tabs = [
     { id: "queue", label: "Queue", count: queueCount },
@@ -544,7 +545,7 @@ export default function CalendarPage() {
 
                           <div className="w-20 text-right pr-4 pt-4 flex-shrink-0">
                             <div className="text-xs font-bold text-[var(--text-muted)]">{publishTime}</div>
-                            {(post.state === "POSTED" || activeTab === "sent") && (
+                            {(post.state === "POSTED" || post.state === "PUBLISHED" || activeTab === "sent") && (
                               <div className="flex items-center justify-end gap-1 text-[10px] text-[var(--text-muted)] font-medium mt-1">
                                 <Pin size={10} className="rotate-45" />
                                 <span>Custom</span>
@@ -563,7 +564,7 @@ export default function CalendarPage() {
 
                           {/* Post Card */}
                           <div className={`flex-1 min-w-0 ${activeTab !== "sent" ? "pb-6" : "pb-4"}`}>
-                            {(post.state === "POSTED" || activeTab === "sent") ? (
+                            {(post.state === "POSTED" || post.state === "PUBLISHED" || activeTab === "sent") ? (
                               <div className="card border border-[var(--border)] rounded-xl bg-[var(--main-background)] overflow-hidden shadow-sm relative group flex flex-col">
                                 
                                 {/* Header */}
